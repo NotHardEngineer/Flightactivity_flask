@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Активность самолетов</h1>
+    <p>Здесь графики, показывающие количиство самолетов в каждом часу</p>
+
+    <form method="post">
+        <label for="showdate">Выбрать день для отображения:</label>
+        <input type="date" id="showdate" name="showdate">
+        <input type="submit" value="Посмотреть">
+    </form>
+    <p></p>
+    <div>
+        <button onclick="redirectToCustomLink()">Обновить данные</button>
+        <script>
+        function redirectToCustomLink() {
+          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+          window.location.href = url_for('update_db');
+        }
+        </script>
+    </div>
+    <p></p>
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

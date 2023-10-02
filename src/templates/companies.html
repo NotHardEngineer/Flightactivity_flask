@@ -1,0 +1,83 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+    <div>
+        <button onclick="redirectToCustomLink()">Данные по всем полётам</button>
+        <script>
+            function redirectToCustomLink() {
+                // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+                window.location.href = url_for('flight_graph');
+            }
+        </script>
+    </div>
+    <script>
+        // Provided data for the graph
+        var providedDataDep = JSON.parse('{{ data.providedDataDep|escapejs }}');
+        var providedDataArr = JSON.parse('{{ data.providedDataArr|escapejs }}');
+        var companyList = JSON.parse('{{ data.companyList|escapejs }}');
+        var companyCount = companyList.length;
+
+        // Set desired width and height here as well
+        for (var i = 0; i < companyCount; i++) {
+            var canvas = document.createElement('canvas');
+            canvas.id = 'graph' + (i + 1);
+            document.body.appendChild(canvas);
+            var maxYScale = Math.max(Math.max(...providedDataDep[i]), Math.max(...providedDataArr[i])) + 1
+            var ctx = canvas.getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                    datasets: [
+                        {
+                            label: "Прилеты",
+                            data: providedDataDep[i],
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: "Вылеты",
+                            data: providedDataArr[i],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: companyList[i],
+                            color: 'rgba(0, 0, 0, 1)'
+                        },
+                    },
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            {#stacked: true,#}
+                            min: 0,
+                            max: maxYScale,
+                            ticks: {
+                                // forces step size to be 50 units
+                                stepSize: 1
+                            }
+
+                        },
+                        x: {
+                            beginAtZero: true,
+                            {#stacked: true#}
+                        }
+                    }
+                }
+            });
+
+            // Adjust the width and height of the chart container
+            var chartContainer = document.getElementById('graph' + (i + 1)).parentElement;
+            chartContainer.classList.add('container');
+            // Update the chart layout
+            chart.resize();
+        }
+    </script>
+
+{% endblock %}
