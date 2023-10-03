@@ -10,21 +10,24 @@ from pathlib import Path
 from flask import (
     Blueprint,
     url_for,
-    redirect,
-    render_template
+    redirect
 )
 
-from .models import Flights, session_db
+from src.models import session_db, Flights, Companies
+from src.utils import delete_spaces
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 
 
-def delete_spaces(s: str):
-    return " ".join(s.split())
+@bp_parsing.route("/")
+def update_tolmachevo():
+    save_tolmachevo_tables()
+    parse_saved_tolmachevo_html()
+    return redirect(url_for('main.main'))
 
 
-def save_tolmachovo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
     url_to_save = 'https://tolmachevo.ru/passengers/information/timetable'
     chrome_options = Options()
     chrome_options.add_argument("--disable-extensions")
@@ -57,6 +60,9 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
     eta_time = dt.time(int(eta_time.split(":", 1)[0]), int(eta_time.split(":", 1)[1]))
 
     with session_db() as s:
+        exist_company = s.query(Companies).filter(Companies.name == company).first()
+        if not exist_company:
+            s.add(Companies(name=company))
         exist_flight = s.query(Flights).filter(Flights.fid == fid).first()
         if exist_flight:
             exist_flight.et_time = eta_time
@@ -76,10 +82,11 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
                 vessel_model=vessel,
                 company=company)
             s.add(f)
+
         s.commit()
 
 
-def parse_saved_tolmachovo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
     target = destination + "/" + name + ".html"
     html_file = open(target, "r")
     index = html_file.read()
@@ -91,7 +98,6 @@ def parse_saved_tolmachovo_html(destination=os.path.join(BASE_DIR, "saved_pages"
         flightdata = [i.text.lower() for i in list(flight.find_all("li"))]
         for item in flightdata:
             item_title, item_data = item.split(":", 1)
-            print(item)
             if "расчетное время" in item_title:
                 e_time, e_date = item_data.split(",", 1)
                 e_time = delete_spaces(e_time)
@@ -110,5 +116,3 @@ def parse_saved_tolmachovo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 company = delete_spaces(item_data)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
-
-

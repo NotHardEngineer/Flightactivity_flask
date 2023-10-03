@@ -19,7 +19,7 @@ def session_db():
 
 class Flights(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fid = db.Column(db.String, nullable=False, unique=True) # Compilation of number and scheduled date
+    fid = db.Column(db.String, nullable=False, unique=True)  # Compilation of number and scheduled date
     number = db.Column(db.String, nullable=False)
     sh_time = db.Column(db.Time, nullable=False)
     sh_date = db.Column(db.Date, nullable=False)
@@ -29,7 +29,18 @@ class Flights(db.Model):
     is_depart = db.Column(db.Boolean, nullable=False)
     vessel_type = db.Column(db.String(255), default='unknown')
     vessel_model = db.Column(db.String(255), default='unknown')
-    company = db.Column(db.String(255), default='unknown')
+    company = db.Column(db.String(255), db.ForeignKey("companies.name"), default='unknown')
 
     def __repr__(self):
         return f"<Flight number {self.number}> on {self.sh_date}, by {self.company}"
+
+
+class Companies(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    time_create = db.Column(db.DateTime, default=datetime.datetime.now())
+    primary_color = db.Column(db.String(6), default="000000")
+    secondary_color = db.Column(db.String(6), default="bb33dd")
+
+    def __repr__(self):
+        return self.name

@@ -1,13 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     <div>
-        <button onclick="redirectToCustomLink()">Данные по компаниям</button>
-        <script>
-            function redirectToCustomLink() {
-                // Replace 'YOUR_CUSTOM_LINK' with your desired URL
-                window.location.href = 'http://flightactivity.ru/companies';
-            }
-        </script>
+        <a class="action" href="{{ url_for('main.companies') }}">
+                <button type="button">Данные по компаниям</button>
+            </a>
     </div>
     <h2>Все рейсы</h2>
     <canvas id="activityChart1" width="400" height="200"></canvas>
@@ -20,7 +16,9 @@
 
 
     <script>
-
+        var data_all = JSON.parse('{{ data.data_all }}');
+        var data_dep = JSON.parse('{{ data.data_dep }}');
+        var data_arr = JSON.parse('{{ data.data_arr }}');
         // Activity 1 Line Chart
         var maxYScale = Math.max(...data_all) + 1
         var ctxActivity1 = document.getElementById('activityChart1').getContext('2d');

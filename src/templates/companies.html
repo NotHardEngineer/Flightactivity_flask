@@ -1,20 +1,20 @@
-{% extends 'flights/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
     <div>
-        <button onclick="redirectToCustomLink()">Данные по всем полётам</button>
-        <script>
-            function redirectToCustomLink() {
-                // Replace 'YOUR_CUSTOM_LINK' with your desired URL
-                window.location.href = url_for('flight_graph');
-            }
-        </script>
+        <a class="action" href="{{ url_for('main.main') }}">
+                <button type="button">Общие данные</button>
+            </a>
     </div>
     <script>
         // Provided data for the graph
-        var providedDataDep = JSON.parse('{{ data.providedDataDep|escapejs }}');
-        var providedDataArr = JSON.parse('{{ data.providedDataArr|escapejs }}');
-        var companyList = JSON.parse('{{ data.companyList|escapejs }}');
+        var providedDataDep = JSON.parse('{{ data.providedDataDep }}');
+        var providedDataArr = JSON.parse('{{ data.providedDataArr }}');
+        var companyList = JSON.parse({{ data.companyList|tojson }});
         var companyCount = companyList.length;
+        console.log(providedDataDep)
+        console.log(providedDataArr)
+        console.log(companyList)
+        console.log(companyCount)
 
         // Set desired width and height here as well
         for (var i = 0; i < companyCount; i++) {

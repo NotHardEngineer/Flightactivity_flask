@@ -18,13 +18,9 @@
     </form>
     <p></p>
     <div>
-        <button onclick="redirectToCustomLink()">Обновить данные</button>
-        <script>
-        function redirectToCustomLink() {
-          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
-          window.location.href = url_for('update_db');
-        }
-        </script>
+        <a class="action" href="{{ url_for('parsing.update_tolmachevo') }}">
+                <button type="button">Обновить данные</button>
+            </a>
     </div>
     <p></p>
     {% block content %}
