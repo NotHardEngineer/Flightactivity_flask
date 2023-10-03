@@ -38,6 +38,7 @@ def create_app(config_class=Config):
         pass
 
     app.register_blueprint(main.bp_main)
+    app.register_blueprint(parsing.bp_parsing)
 
     @app.route("/hello")
     def hello():

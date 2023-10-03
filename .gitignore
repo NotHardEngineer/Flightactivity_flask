@@ -1,2 +1,6 @@
 /venv/
 /.idea/
+/saved_pages/page.html
+/saved_pages/page_tomorrow.html
+/instance/
+/migrations/
