@@ -25,8 +25,8 @@ def main():
     with session_db() as s:
         all_flights = s.query(Flights).filter(Flights.et_date == day_for_seek)
         if all_flights.count() > 0:
-            depart_fights = all_flights.filter(Flights.is_depart == True)
-            arrive_flights = all_flights.filter(Flights.is_depart == False)
+            depart_fights = all_flights.filter(Flights.is_depart==True)
+            arrive_flights = all_flights.filter(Flights.is_depart==False)
             count_by_hours_all = []
             count_by_hours_dep = []
             count_by_hours_arr = []
