@@ -9,7 +9,7 @@ from flask import (
 from datetime import datetime
 from pytz import timezone
 from sqlalchemy import extract
-import json
+from src.utils import higher_first
 
 from src.models import *
 
@@ -25,8 +25,8 @@ def main():
     with session_db() as s:
         all_flights = s.query(Flights).filter(Flights.et_date == day_for_seek)
         if all_flights.count() > 0:
-            depart_fights = all_flights.filter(Flights.is_depart==True)
-            arrive_flights = all_flights.filter(Flights.is_depart==False)
+            depart_fights = all_flights.filter(Flights.is_depart == True)
+            arrive_flights = all_flights.filter(Flights.is_depart == False)
             count_by_hours_all = []
             count_by_hours_dep = []
             count_by_hours_arr = []
@@ -53,9 +53,7 @@ def companies():
     with session_db() as s:
         all_flights = s.query(Flights).filter(Flights.et_date == day_for_seek)
         companies_list = [i[0] for i in all_flights.with_entities(Flights.company).distinct()]
-        print(type(companies_list))
-        data_for_graph_dep = []
-        data_for_graph_arr = []
+        flights_data = {}
         if all_flights.count() > 0:
             for company in companies_list:
                 company_flights = all_flights.filter(Flights.company == company)
@@ -66,17 +64,12 @@ def companies():
                 for i in range(24):
                     count_by_hours_dep.append(depart_fights.filter(extract('hour', Flights.et_time) == i).count())
                     count_by_hours_arr.append(arrive_flights.filter(extract('hour', Flights.et_time) == i).count())
-                data_for_graph_dep.append(count_by_hours_dep)
-                data_for_graph_arr.append(count_by_hours_arr)
+                flights_data[
+                    f'{higher_first(company)}, кол-во рейсов: {sum(count_by_hours_dep) + sum(count_by_hours_arr)}'] = {
+                    'flights_arr': count_by_hours_arr,
+                    'flights_dep': count_by_hours_dep}
 
-            companies_list = json.dumps(companies_list)
-            data = {
-                'providedDataDep': data_for_graph_dep,
-                'providedDataArr': data_for_graph_arr,
-                'companyList': companies_list
-            }
-            print(data)
-            return render_template("companies.html", data=data)
+            return render_template("companies.html", data=flights_data)
 
         else:
             return render_template("nodata.html")
@@ -87,5 +80,4 @@ def test_write():
     day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     with session_db() as s:
         flight = s.query(Flights).filter(Flights.et_date == day_for_seek).first()
-        print(flight.et_time, type(flight.et_time))
     return redirect(url_for("hello"))

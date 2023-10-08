@@ -1,30 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>{{title}}</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Активность самолетов</h1>
-    <p>Здесь графики, показывающие количиство самолетов в каждом часу</p>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
 
-    <form method="post">
-        <label for="showdate">Выбрать день для отображения:</label>
-        <input type="date" id="showdate" name="showdate">
-        <input type="submit" value="Посмотреть">
-    </form>
-    <p></p>
-    <div>
-        <a class="action" href="{{ url_for('parsing.update_tolmachevo') }}">
-                <button type="button">Обновить данные</button>
-            </a>
+        <div class="navbar-header">
+            <!-- BUTTON FOR COLLAPSIBLE -->
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#alignment-example" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- BRAND -->
+            <div class="navbar-header">
+                <a class="navbar-brand">Flightactivity</a>
+                <a class="action" href="{{ url_for('parsing.update_tolmachevo') }}">
+                <button type="button" class="btn btn-default navbar-btn">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </button>
+                </a>
+            </div>
+        </div>
+        <!-- COLLAPSIBLE NAVBAR -->
+        <div class="collapse navbar-collapse" id="alignment-example">
+            <!-- Links -->
+            <ul class="nav navbar-nav">
+                <li><a href="{{url_for('main.main')}}">Главная</a></li>
+                <li><a href="{{url_for('main.companies')}}">Компании</a></li>
+            </ul>
+        </div>
     </div>
-    <p></p>
-    {% block content %}
-    {% endblock %}
-</div>
+</nav>
+
+
+{%block content%}
+{%endblock%}
 </body>
+
 </html>

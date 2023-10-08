@@ -11,7 +11,6 @@ class Config:
     SQLALCHEMY_SESSION_OPTIONS = {"expire_on_commit": False}
 
 
-
 def create_app(config_class=Config):
     # create and configure the app
     app = Flask(
@@ -43,7 +42,6 @@ def create_app(config_class=Config):
     @app.route("/hello")
     def hello():
         return "Hello, World!"
-
 
     return app
 

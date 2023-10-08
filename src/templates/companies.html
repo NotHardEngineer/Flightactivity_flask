@@ -1,85 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div>
-        <a class="action" href="{{ url_for('main.main') }}">
-                <button type="button">Общие данные</button>
-            </a>
-    </div>
-    <script>
-        // Provided data for the graph
-        var providedDataDep = JSON.parse('{{ data.providedDataDep }}');
-        var providedDataArr = JSON.parse('{{ data.providedDataArr }}');
-        var companyList = JSON.parse({{ data.companyList|tojson }});
-        var companyCount = companyList.length;
-        const labels= ['00', '01', '02', '03', '04', '05', '06', '07', '08',
-        '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-        '21', '22', '23']
+<div class="container-fluid" style="padding-top: 60px" id="graphsContainer"></div>
+<script>
+    // Provided data for the graph
+    var graphsContainer = document.getElementById('graphsContainer');
 
+    const labels= ['00', '01', '02', '03', '04', '05', '06', '07', '08',
+    '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    '21', '22', '23'];
+    var data = JSON.parse('{{data|tojson}}');
+    for (const [company, value] of Object.entries(data)) {
+        console.log(company, value);
+        var row = document.createElement('div');
+        row.classList.add('row');
+        graphsContainer.appendChild(row);
 
-        for (var i = 0; i < companyCount; i++) {
-            var canvas = document.createElement('canvas');
-            var div = document.createElement('div');
-            canvas.id = 'graph' + (i + 1);
-            div.id = 'div' + canvas.id;
-            document.body.appendChild(div);
-            div.appendChild(canvas);
-            var maxYScale = Math.max(Math.max(...providedDataDep[i]), Math.max(...providedDataArr[i])) + 1
-            var ctx = canvas.getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "Прилеты",
-                            data: providedDataDep[i],
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Вылеты",
-                            data: providedDataArr[i],
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                },
-                options: {
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: companyList[i],
-                            color: 'rgba(0, 0, 0, 1)'
-                        },
+        var col = document.createElement('div');
+        col.classList.add('col-md-6', 'col-md-offset-3', 'col-xs-12');
+        row.appendChild(col);
+
+        var h2 = document.createElement('h2');
+        h2.innerText = company;
+        col.appendChild(h2);
+
+        var canvas = document.createElement('canvas');
+        canvas.id = 'graph' + company;
+        col.appendChild(canvas);
+
+        var maxYScale = Math.max(Math.max(...value['flights_arr']), Math.max(...value['flights_dep'])) + 1
+        var ctx = canvas.getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Прилеты",
+                        data: value['flights_arr'],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
                     },
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            {#stacked: true,#}
-                            min: 0,
-                            max: maxYScale,
-                            ticks: {
-                                // forces step size to be 50 units
-                                stepSize: 1
-                            }
+                    {
+                        label: "Вылеты",
+                        data: value['flights_dep'],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+            },
+            options: {
 
-                        },
-                        x: {
-                            beginAtZero: true,
-                            {#stacked: true#}
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        {#stacked: true,#}
+                        min: 0,
+                        max: maxYScale,
+                        ticks: {
+                            // forces step size to be 50 units
+                            stepSize: 1
                         }
+
+                    },
+                    x: {
+                        beginAtZero: true,
+                        {#stacked: true#}
                     }
                 }
-            });
+            }
+        });
 
-            // Adjust the width and height of the chart container
-            var chartContainer = document.getElementById('graph' + (i + 1)).parentElement;
-            chartContainer.classList.add('container');
-            // Update the chart layout
-            chart.resize();
-        }
-    </script>
+        // Adjust the width and height of the chart container
+        var chartContainer = document.getElementById('graph' + company).parentElement;
+        chartContainer.classList.add('container');
+        // Update the chart layout
+        chart.resize();
+    }
+</script>
 
 {% endblock %}
