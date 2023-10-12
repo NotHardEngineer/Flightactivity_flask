@@ -37,9 +37,9 @@
             <div class="navbar-header">
                 <a class="navbar-brand">Flightactivity</a>
                 <a class="action" href="{{ url_for('parsing.update_tolmachevo') }}">
-                <button type="button" class="btn btn-default navbar-btn">
-                    <span class="glyphicon glyphicon-refresh"></span>
-                </button>
+                    <button type="button" class="btn btn-default navbar-btn">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </button>
                 </a>
             </div>
         </div>
@@ -49,11 +49,25 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{url_for('main.main')}}">Главная</a></li>
                 <li><a href="{{url_for('main.companies')}}">Компании</a></li>
+
             </ul>
+
+            <form method="post" class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="date" id="flights_date" name="flights_date">
+                </div>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </form>
         </div>
     </div>
 </nav>
-
+<script>
+    var date = '{{date}}';
+    console.log(date);
+    document.getElementById("flights_date").defaultValue = date;
+</script>
 
 {%block content%}
 {%endblock%}

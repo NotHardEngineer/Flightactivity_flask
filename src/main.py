@@ -19,7 +19,7 @@ bp_main = Blueprint('main', __name__)
 @bp_main.route("/", methods=("GET", "POST"))
 def main():
     if request.method == 'POST':
-        day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+        day_for_seek = request.form['flights_date']
     else:
         day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     with session_db() as s:
@@ -39,7 +39,9 @@ def main():
                 'data_dep': count_by_hours_dep,
                 'data_arr': count_by_hours_arr
             }
-            return render_template("index.html", data=data)
+            date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
+            return render_template("index.html", data=data, date_for_show=date_for_show,
+                                   date=day_for_seek)
         else:
             return render_template("nodata.html")
 
@@ -47,12 +49,14 @@ def main():
 @bp_main.route("/companies", methods=("GET", "POST"))
 def companies():
     if request.method == 'POST':
-        day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+        day_for_seek = request.form['flights_date']
     else:
         day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+        print(type(day_for_seek), day_for_seek)
     with session_db() as s:
         all_flights = s.query(Flights).filter(Flights.et_date == day_for_seek)
         companies_list = [i[0] for i in all_flights.with_entities(Flights.company).distinct()]
+        companies_list.sort()
         flights_data = {}
         if all_flights.count() > 0:
             for company in companies_list:
@@ -68,16 +72,9 @@ def companies():
                     f'{higher_first(company)}, кол-во рейсов: {sum(count_by_hours_dep) + sum(count_by_hours_arr)}'] = {
                     'flights_arr': count_by_hours_arr,
                     'flights_dep': count_by_hours_dep}
-
-            return render_template("companies.html", data=flights_data)
+            date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
+            return render_template("companies.html", data=flights_data, date_for_show=date_for_show,
+                                   date=day_for_seek)
 
         else:
             return render_template("nodata.html")
-
-
-@bp_main.route("/test")
-def test_write():
-    day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
-    with session_db() as s:
-        flight = s.query(Flights).filter(Flights.et_date == day_for_seek).first()
-    return redirect(url_for("hello"))

@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container-fluid" style="padding-top: 60px" id="graphsContainer"></div>
+<div class="container-fluid" style="padding-top: 60px" id="graphsContainer">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-xs-12">
+            <h1>Рейсы по компаниям за {{date_for_show}}</h1>
+        </div>
+    </div>
+</div>
 <script>
     // Provided data for the graph
     var graphsContainer = document.getElementById('graphsContainer');
@@ -10,7 +16,6 @@
     '21', '22', '23'];
     var data = JSON.parse('{{data|tojson}}');
     for (const [company, value] of Object.entries(data)) {
-        console.log(company, value);
         var row = document.createElement('div');
         row.classList.add('row');
         graphsContainer.appendChild(row);
