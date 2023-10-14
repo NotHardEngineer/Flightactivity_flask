@@ -7,7 +7,7 @@ from src import db, main, parsing
 
 class Config:
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@localhost:5432/flightactivity_db"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@db/flightactivity_db"
     SQLALCHEMY_SESSION_OPTIONS = {"expire_on_commit": False}
 
 
@@ -21,7 +21,7 @@ def create_app(config_class=Config):
     )
     app.config.from_object(config_class)
     app.config["SECRET_KEY"] = "your_secret_key_here"
-
+    db.create_db()
     db.init_app(app)
 
     app.config["IPYTHON_CONFIG"] = {

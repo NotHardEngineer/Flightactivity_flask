@@ -10,3 +10,9 @@ def init_app(app):
     from .models import Flights
     db.init_app(app)
     migrate.init_app(app, db)
+
+
+def create_db():
+    db.drop_all()
+    db.create_all()
+    session.commit()
