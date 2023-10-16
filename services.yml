@@ -6,13 +6,20 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
       - POSTGRES_DB=flightactivity_db
-    networks:
-      - default
-  web:
-    build: .
+    ports:
+      - "5432"
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     depends_on:
       - db
+      - selenium
     networks:
       - default

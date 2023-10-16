@@ -1,8 +1,11 @@
 import os
 
 from flask import Flask
+# from flask_admin import Admin
+# from flask_admin.contrib.sqla import ModelView
 
 from src import db, main, parsing
+from src.models import Flights, Companies
 
 
 class Config:
@@ -21,7 +24,6 @@ def create_app(config_class=Config):
     )
     app.config.from_object(config_class)
     app.config["SECRET_KEY"] = "your_secret_key_here"
-    db.create_db()
     db.init_app(app)
 
     app.config["IPYTHON_CONFIG"] = {
@@ -38,6 +40,9 @@ def create_app(config_class=Config):
 
     app.register_blueprint(main.bp_main)
     app.register_blueprint(parsing.bp_parsing)
+    # admin = Admin(app, name='delete on prod', template_mode='bootstrap3')
+    # admin.add_view(ModelView(Flights, db.session))
+    # admin.add_view(ModelView(Companies, db.session))
 
     @app.route("/hello")
     def hello():
