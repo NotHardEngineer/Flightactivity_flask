@@ -10,11 +10,11 @@ from src.models import Flights, Companies
 
 class Config:
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@db/flightactivity_db"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@localhost:5432/flightactivity_db"
     SQLALCHEMY_SESSION_OPTIONS = {"expire_on_commit": False}
 
 
-def create_app(config_class=Config):
+def create_app(config_class):
     # create and configure the app
     app = Flask(
         __name__,
@@ -52,5 +52,5 @@ def create_app(config_class=Config):
 
 
 if __name__ == "__main__":
-    app = create_app()
+    app = create_app(Config)
     app.run(debug=True)
