@@ -4,7 +4,9 @@ import datetime as dt
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import ChromiumOptions, Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import chromedriver_binary
 import os
 from pathlib import Path
 from flask import (
@@ -24,16 +26,19 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 def update_tolmachevo():
     save_tolmachevo_tables()
     parse_saved_tolmachevo_html()
+    parse_saved_tolmachevo_html(name="page_tomorrow")
     return redirect(url_for('main.main'))
 
 
 def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+    if not os.path.exists(destination):
+        os.makedirs(destination)
     url_to_save = 'https://tolmachevo.ru/passengers/information/timetable'
-    chrome_options = Options()
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")  # linux only
-    chrome_options.add_argument("--headless")
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--window-size=1920,1080')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url_to_save)
     element = WebDriverWait(driver, timeout=20, poll_frequency=1) \

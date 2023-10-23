@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=flightactivity_db
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data/
+
+  app_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile_prod
+    volumes:
+      - static_volume:/home/app/web/project/static
+      - media_volume:/home/app/web/project/media
+    expose:
+      - 5000
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+      - static_volume:/home/app/web/project/static
+      - media_volume:/home/app/web/project/media
+    ports:
+      - "1337:80"
+    depends_on:
+      - app_prod
+
+volumes:
+  postgres_data_prod:
+  static_volume:
+  media_volume:

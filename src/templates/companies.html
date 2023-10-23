@@ -14,8 +14,14 @@
     const labels= ['00', '01', '02', '03', '04', '05', '06', '07', '08',
     '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
     '21', '22', '23'];
-    var data = JSON.parse('{{data|tojson}}');
-    for (const [company, value] of Object.entries(data)) {
+    var companies = {{ companies|safe }};
+    var all_dep = {{ all_dep }};
+    var all_arr = {{ all_arr }};
+    var companyCount = companies.length;
+
+    for (var i = 0; i < companyCount; i++) {
+
+        company = companies[i]
         var row = document.createElement('div');
         row.classList.add('row');
         graphsContainer.appendChild(row);
@@ -32,7 +38,7 @@
         canvas.id = 'graph' + company;
         col.appendChild(canvas);
 
-        var maxYScale = Math.max(Math.max(...value['flights_arr']), Math.max(...value['flights_dep'])) + 1
+        var maxYScale = Math.max(Math.max(...all_dep[i]), Math.max(...all_arr[i])) + 1
         var ctx = canvas.getContext('2d');
         var chart = new Chart(ctx, {
             type: 'bar',
@@ -41,14 +47,14 @@
                 datasets: [
                     {
                         label: "Прилеты",
-                        data: value['flights_arr'],
+                        data: all_arr[i],
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     },
                     {
                         label: "Вылеты",
-                        data: value['flights_dep'],
+                        data: all_dep[i],
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1
