@@ -4,8 +4,6 @@ import datetime as dt
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.chrome.options import ChromiumOptions, Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import chromedriver_binary
 import os
 from pathlib import Path
