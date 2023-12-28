@@ -8,12 +8,10 @@
     </div>
 </div>
 <script>
-    // Provided data for the graph
+
     var graphsContainer = document.getElementById('graphsContainer');
 
-    const labels= ['00', '01', '02', '03', '04', '05', '06', '07', '08',
-    '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    '21', '22', '23'];
+    var labels= {{ labels|safe }};
     var companies = {{ companies|safe }};
     var all_dep = {{ all_dep }};
     var all_arr = {{ all_arr }};
@@ -43,7 +41,7 @@
         var chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: labels[i],
                 datasets: [
                     {
                         label: "Прилеты",

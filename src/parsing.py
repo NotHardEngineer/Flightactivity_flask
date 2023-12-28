@@ -1,10 +1,13 @@
 from bs4 import BeautifulSoup
 import time
 import datetime as dt
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-import chromedriver_binary
+
+import chromedriver_binary  # We need this, don`t delete
+
 import os
 from pathlib import Path
 from flask import (

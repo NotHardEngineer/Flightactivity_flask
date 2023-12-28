@@ -52,7 +52,7 @@ def create_app(config_class):
     @app.route("/hello")
     def hello():
         print("Hello, World!")
-        return "Hello, World!"
+        return "Hello, World 2!"
 
     return app
 
