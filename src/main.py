@@ -22,6 +22,7 @@ def main():
     else:
         day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     with session_db() as s:
+        table_content_dep = []
         all_flights = s.query(Flights).filter(Flights.et_date == day_for_seek)
         if all_flights.count() > 0:
             depart_fights = all_flights.filter(Flights.is_depart == True)
@@ -29,25 +30,37 @@ def main():
             count_by_hours_all = []
             count_by_hours_dep = []
             count_by_hours_arr = []
+
             for i in range(24):
                 count_by_hours_all.append(all_flights.filter(extract('hour', Flights.et_time) == i).count())
+
                 count_by_hours_dep.append(depart_fights.filter(extract('hour', Flights.et_time) == i).count())
+
                 count_by_hours_arr.append(arrive_flights.filter(extract('hour', Flights.et_time) == i).count())
+
+            for flight in depart_fights:
+                table_content_dep.append([flight.number, flight.et_time.strftime('%H:%M'), flight.company])
+
             data = {
                 'data_all': count_by_hours_all,
                 'data_dep': count_by_hours_dep,
                 'data_arr': count_by_hours_arr
             }
             date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
-            return render_template("index.html", title="Самолеты в толмачево", data=data, date_for_show=date_for_show,
-                                   date=day_for_seek)
+            return render_template("index.html",
+                                   title="Самолеты в толмачево",
+                                   data=data,
+                                   table_content_dep=table_content_dep,
+                                   date_for_show=date_for_show,
+                                   date=day_for_seek,
+                                   )
         else:
             return render_template("nodata.html")
 
 
 @bp_main.route("/companies/", methods=("GET", "POST"))
 def companies():
-    default_labels= ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+    default_labels = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
 
     if request.method == 'POST':
         day_for_seek = request.form['flights_date']
