@@ -120,5 +120,6 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 number = delete_spaces(item_data)
             elif "компания" in item_title:
                 company = delete_spaces(item_data)
+        print(number, s_time, s_date, e_time, e_date, vessel_type, company)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
