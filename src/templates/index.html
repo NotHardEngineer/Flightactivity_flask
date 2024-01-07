@@ -18,14 +18,18 @@
             <canvas id="activityChart2" width="400" height="200"></canvas>
         </div>
     </div>
-     <div class="row">
+    <div class="row">
         <div class="col-md-6 col-md-offset-3 col-xs-12 table-responsive">
-            <table class="table table-bordered" style="width: 100%">
+            <table class="table table-bordered table-striped">
+                <thead>
                 <tr>
                     <th>Номер рейса</th>
-                    <th>Расчетное время</th>
+                    <th>Время</th>
                     <th>Компания</th>
+                    <th>Судно</th>
                 </tr>
+                </thead>
+                <tbody>
                 {%for flight in table_content_arr%}
                 <tr>
                     {%for col in flight%}
@@ -33,6 +37,7 @@
                     {%endfor%}
                 </tr>
                 {%endfor%}
+                </tbody>
             </table>
         </div>
     </div>
@@ -44,10 +49,10 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-md-offset-3 col-xs-12 table-responsive">
-            <table class="table table-bordered" style="width: 100%">
+            <table class="table table-bordered table-striped">
                 <tr>
                     <th>Номер рейса</th>
-                    <th>Расчетное время</th>
+                    <th>Время</th>
                     <th>Компания</th>
                 </tr>
                 {%for flight in table_content_dep%}

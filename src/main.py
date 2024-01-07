@@ -24,10 +24,11 @@ def main():
     with session_db() as s:
         table_content_dep = []
         table_content_arr = []
+        table_content_all = []
 
         all_flights = s.query(Flights). \
             filter(Flights.et_date == day_for_seek). \
-            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company). \
+            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model). \
             order_by(Flights.et_time)
 
         if all_flights.count() > 0:
@@ -46,9 +47,14 @@ def main():
 
             for flight in all_flights:
                 if flight.is_depart == True:
-                    table_content_dep.append([flight.number, flight.et_time.strftime('%H:%M'), flight.company])
+                    table_content_dep.append(
+                        [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
                 else:
-                    table_content_arr.append([flight.number, flight.et_time.strftime('%H:%M'), flight.company])
+                    table_content_arr.append(
+                        [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
+
+                table_content_all.append(
+                    [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
 
             data = {
                 'data_all': count_by_hours_all,

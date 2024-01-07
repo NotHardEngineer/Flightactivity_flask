@@ -74,6 +74,7 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
             exist_flight.et_time = eta_time
             exist_flight.et_date = eta_date
             exist_flight.vessel_model = vessel
+            s.add(exist_flight)
         else:
             f = Flights(
                 fid=fid,
@@ -120,6 +121,5 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 number = delete_spaces(item_data)
             elif "компания" in item_title:
                 company = delete_spaces(item_data)
-        print(number, s_time, s_date, e_time, e_date, vessel_type, company)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
