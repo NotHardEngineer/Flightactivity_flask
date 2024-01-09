@@ -6,6 +6,7 @@ from flask import Flask
 
 from src import db, main, parsing
 from src.models import Flights, Companies
+import automaton
 
 
 class Config:
@@ -22,6 +23,10 @@ def create_app(config_class):
         template_folder="src/templates",
         static_folder="src/static",
     )
+
+    scheduler = automaton.scheduler
+    scheduler.init_app(app)
+    scheduler.start()
     app.config.from_object(config_class)
     app.config["SECRET_KEY"] = "your_secret_key_here"
     db.init_app(app)
@@ -46,6 +51,7 @@ def create_app(config_class):
 
     @app.route("/hello")
     def hello():
+        print("Hello, World!")
         return "Hello, World!"
 
     return app

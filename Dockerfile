@@ -13,6 +13,8 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 # set display port to avoid crash
 ENV DISPLAY=:99
 
+ENV PYTHONUNBUFFERED=1
+
 RUN pip install -r requirements.txt
 
 COPY . .

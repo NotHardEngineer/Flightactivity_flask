@@ -7,7 +7,7 @@ migrate = Migrate()
 
 
 def init_app(app):
-    from .models import Flights
+    from .models import Flights, Companies
     db.init_app(app)
     migrate.init_app(app, db)
 

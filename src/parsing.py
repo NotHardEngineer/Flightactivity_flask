@@ -1,12 +1,13 @@
 from bs4 import BeautifulSoup
 import time
 import datetime as dt
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.chrome.options import ChromiumOptions, Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import chromedriver_binary
+
+import chromedriver_binary  # We need this, don`t delete
+
 import os
 from pathlib import Path
 from flask import (
@@ -73,6 +74,7 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
             exist_flight.et_time = eta_time
             exist_flight.et_date = eta_date
             exist_flight.vessel_model = vessel
+            s.add(exist_flight)
         else:
             f = Flights(
                 fid=fid,

@@ -32,7 +32,7 @@ class Flights(db.Model):
     company = db.Column(db.String(255), db.ForeignKey("companies.name"), default='unknown')
 
     def __repr__(self):
-        return f"<Flight number {self.number}> on {self.sh_date}, by {self.company}"
+        return f"Flight number {self.number}> on {self.sh_date}, by {self.company}"
 
 
 class Companies(db.Model):
