@@ -22,9 +22,9 @@ def main():
     else:
         day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     with session_db() as s:
-        table_content_dep = []
-        table_content_arr = []
-        table_content_all = []
+        table_content_dep = {}
+        table_content_arr = {}
+        table_content_all = {}
 
         all_flights = s.query(Flights). \
             filter(Flights.et_date == day_for_seek). \
@@ -39,22 +39,24 @@ def main():
             count_by_hours_arr = []
 
             for i in range(24):
-                count_by_hours_all.append(all_flights.filter(extract('hour', Flights.et_time) == i).count())
+                all_hour_flights = all_flights.filter(extract('hour', Flights.et_time) == i)
+                table_content_dep[i] = []
+                table_content_arr[i] = []
+                table_content_all[i] = []
 
+                count_by_hours_all.append(all_hour_flights.count())
                 count_by_hours_dep.append(depart_fights.filter(extract('hour', Flights.et_time) == i).count())
-
                 count_by_hours_arr.append(arrive_flights.filter(extract('hour', Flights.et_time) == i).count())
 
-            for flight in all_flights:
-                if flight.is_depart == True:
-                    table_content_dep.append(
-                        [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
-                else:
-                    table_content_arr.append(
-                        [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
-
-                table_content_all.append(
-                    [flight.number, flight.et_time.strftime('%H:%M'), flight.company, flight.vessel_model])
+                for flight in all_hour_flights:
+                    table_content_all[i].append(
+                        [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
+                    if flight.is_depart == True:
+                        table_content_dep[i].append(
+                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
+                    else:
+                        table_content_arr[i].append(
+                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
 
             data = {
                 'data_all': count_by_hours_all,
@@ -65,6 +67,7 @@ def main():
             return render_template("index.html",
                                    title="Самолеты в толмачево",
                                    data=data,
+                                   table_content_all=table_content_all,
                                    table_content_dep=table_content_dep,
                                    table_content_arr=table_content_arr,
                                    date_for_show=date_for_show,

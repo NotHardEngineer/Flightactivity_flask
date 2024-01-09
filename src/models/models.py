@@ -34,13 +34,6 @@ class Flights(db.Model):
     def __repr__(self):
         return f"Flight number {self.number}> on {self.sh_date}, by {self.company}"
 
-    # def update_eta(self, et_date: str, et_time: str):
-    #
-    #     # Add data validation later
-    #
-    #     with session_db() as s:
-    #
-
 
 class Companies(db.Model):
     id = db.Column(db.Integer, primary_key=True)
