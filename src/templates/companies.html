@@ -13,6 +13,7 @@
 
     var labels= {{ labels|safe }};
     var companies = {{ companies|safe }};
+    var tables_content = {{tables_content|safe}};
     var all_dep = {{ all_dep }};
     var all_arr = {{ all_arr }};
     var companyCount = companies.length;
@@ -36,7 +37,82 @@
         canvas.id = 'graph' + company;
         col.appendChild(canvas);
 
-        var maxYScale = Math.max(Math.max(...all_dep[i]), Math.max(...all_arr[i])) + 1
+        var tableRow = document.createElement('div');
+        tableRow.classList.add('row');
+        graphsContainer.appendChild(tableRow);
+
+        var tableCol = document.createElement('div');
+        tableCol.classList.add('col-md-6', 'col-md-offset-3', 'col-xs-12', 'table-responsive');
+        tableRow.appendChild(tableCol);
+
+        var tableList = document.createElement('div')
+        tableList.classList.add('list-group-item')
+        tableList.id = 'schedule' + company.replaceAll(' ', '')
+        tableCol.appendChild(tableList)
+
+        var tableHeader = document.createElement('div')
+        tableHeader.id = 'scheduleExpander' + company.replaceAll(' ', '')
+        tableHeader.dataset.target = "#scheduleContent" + company.replaceAll(' ', '')
+        tableHeader.dataset.toggle = 'collapse'
+        tableHeader.dataset.groupId = "scheduleGrandparent" + company.replaceAll(' ', '')
+        tableHeader.dataset.role = "scheduleExpander" + company.replaceAll(' ', '')
+        tableHeader.textContent = "Показать расписание"
+        tableList.appendChild(tableHeader)
+
+        var tableContent = document.createElement('div')
+        tableContent.classList.add('collapse')
+        tableContent.id = 'scheduleContent' + company.replaceAll(' ', '')
+        tableContent.ariaExpanded = 'true'
+        tableList.appendChild(tableContent)
+
+        var table = document.createElement('table')
+        table.classList.add("table", "table-bordered", "table-striped")
+        tableContent.appendChild(table)
+
+        var thead = document.createElement('thead')
+        table.appendChild(thead)
+
+        var headTr = document.createElement('tr')
+        thead.appendChild(headTr)
+
+        
+        header_list = ["Время", "Номер рейса", "Тип", "Судно"]
+        for (var j = 0; j < header_list.length; j++){
+            var th = document.createElement('th')
+            th.textContent = header_list[j]
+            headTr.appendChild(th)
+        }
+
+        var tbody = document.createElement('tbody')
+        table.appendChild(tbody)
+        
+        for (const [hour, hour_flights] of Object.entries(tables_content[i])) {
+            var hourTr = document.createElement('tr')
+            hourTr.dataset.toggle = "collapse"
+            hourTr.dataset.target = "." + company.replaceAll(' ', '') + hour
+            tbody.appendChild(hourTr)
+
+            var td = document.createElement('td')
+            td.textContent = hour + ':00 - ' + (Number(hour)+1) + ":00"
+            hourTr.appendChild(td)
+
+            for (var k = 0; k < hour_flights.length; k++){
+                var flight = hour_flights[k]
+                var flightTr = document.createElement('tr')
+                flightTr.classList.add("collapse", company.replaceAll(' ', '') + hour)
+                tbody.appendChild(flightTr)
+
+                for (var j = 0; j < flight.length; j++){
+                    var td = document.createElement('td')
+                    td.textContent = String(flight[j]).replaceAll('true', 'Вылет').replaceAll('false', 'Прилет')
+                    flightTr.appendChild(td)
+                }
+                                
+            }
+        }
+
+
+        var maxYScale = Math.max(Math.max(...all_dep[i]), Math.max(...all_arr[i])) + 1;
         var ctx = canvas.getContext('2d');
         var chart = new Chart(ctx, {
             type: 'bar',

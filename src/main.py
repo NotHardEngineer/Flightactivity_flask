@@ -31,6 +31,7 @@ def main():
             with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model). \
             order_by(Flights.et_time)
 
+
         if all_flights.count() > 0:
             depart_fights = all_flights.filter(Flights.is_depart == True)
             arrive_flights = all_flights.filter(Flights.is_depart == False)
@@ -40,6 +41,7 @@ def main():
 
             for i in range(24):
                 all_hour_flights = all_flights.filter(extract('hour', Flights.et_time) == i)
+
                 table_content_dep[i] = []
                 table_content_arr[i] = []
                 table_content_all[i] = []
@@ -90,12 +92,17 @@ def companies():
     with session_db() as s:
         all_flights = s.query(Flights). \
             filter(Flights.et_date == day_for_seek). \
-            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company)
+            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model)
+
         companies_list = [i[0] for i in all_flights.with_entities(Flights.company).distinct()]
         companies_list.sort()
+
+        all_flights = all_flights.order_by(Flights.et_time)
+
         all_dep = []
         all_arr = []
         all_labels = []
+        all_tables_content = []
 
         if all_flights.count() > 0:
             for i in range(len(companies_list)):
@@ -107,9 +114,13 @@ def companies():
 
                 count_by_hours_dep = []
                 count_by_hours_arr = []
-                hour_labels = []
+                company_hour_labels = []
+                company_table_content = {}
+
 
                 for hour in range(24):
+
+                    hour_company_flights = company_flights.filter(extract('hour', Flights.et_time) == hour)
                     hour_depart_flights = depart_fights.filter(extract('hour', Flights.et_time) == hour)
                     count_hour_depart = hour_depart_flights.count()
                     hour_arrive_flights = arrive_flights.filter(extract('hour', Flights.et_time) == hour)
@@ -120,20 +131,28 @@ def companies():
 
                     if count_hour_depart + count_hour_arrive == 1:
                         if count_hour_depart > count_hour_arrive:
-                            hour_labels.append(str(hour_depart_flights[0].et_time)[:5])
+                            company_hour_labels.append(str(hour_depart_flights[0].et_time)[:5])
                         else:
-                            hour_labels.append(str(hour_arrive_flights[0].et_time)[:5])
+                            company_hour_labels.append(str(hour_arrive_flights[0].et_time)[:5])
                     else:
-                        hour_labels.append(default_labels[hour])
+                        company_hour_labels.append(default_labels[hour])
+
+                    if count_hour_depart+count_hour_arrive > 0:
+                        company_table_content[hour] = []
+                        for flight in hour_company_flights:
+                            company_table_content[hour].append(
+                                [flight.et_time.strftime('%H:%M'), flight.number, flight.is_depart, flight.vessel_model])
 
                 all_arr.append(count_by_hours_arr)
                 all_dep.append(count_by_hours_dep)
-                all_labels.append(hour_labels)
+                all_labels.append(company_hour_labels)
+                all_tables_content.append(company_table_content)
             date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
             return render_template("companies.html",
                                    title="Авиакомпании в толмачево",
                                    companies=json.dumps(companies_list),
                                    labels=json.dumps(all_labels),
+                                   tables_content=json.dumps(all_tables_content),
                                    all_arr=all_arr,
                                    all_dep=all_dep,
                                    date_for_show=date_for_show,
