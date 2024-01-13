@@ -52,7 +52,7 @@ def main():
 
                 for flight in all_hour_flights:
                     table_content_all[i].append(
-                        [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
+                        [flight.et_time.strftime('%H:%M'), flight.number, flight.company, str(flight.is_depart), flight.vessel_model])
                     if flight.is_depart == True:
                         table_content_dep[i].append(
                             [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])

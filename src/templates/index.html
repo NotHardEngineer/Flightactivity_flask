@@ -33,6 +33,7 @@
                             <th>Время</th>
                             <th>Номер рейса</th>
                             <th>Компания</th>
+                            <th>Тип</th>
                             <th>Судно</th>
                         </tr>
                         </thead>
@@ -44,7 +45,8 @@
                             {%for flight in hour_flights%}
                                 <tr class="collapse allHour{{hour}}">
                                     {%for col in flight%}
-                                    <td>{{col}}</td>
+
+                                    <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
                                     {%endfor%}
                                 </tr>
                             {%endfor%}
