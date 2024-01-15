@@ -13,7 +13,8 @@ from pathlib import Path
 from flask import (
     Blueprint,
     url_for,
-    redirect
+    redirect,
+    current_app
 )
 
 from src.models import session_db, Flights, Companies
@@ -25,13 +26,22 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 
 @bp_parsing.route("/")
 def update_tolmachevo():
+    start_time = time.time()
+    current_app.logger.info("Update requested")
+
     save_tolmachevo_tables()
     parse_saved_tolmachevo_html()
     parse_saved_tolmachevo_html(name="page_tomorrow")
+
+    current_app.logger.info("Update finished in %s sec" % format(time.time() - start_time, '.2f'))
+
     return redirect(url_for('main.main'))
 
 
 def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+    start_time = time.time()
+    current_app.logger.info("Saving tolmachevo tables started")
+
     if not os.path.exists(destination):
         os.makedirs(destination)
     url_to_save = 'https://tolmachevo.ru/passengers/information/timetable'
@@ -55,9 +65,13 @@ def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), na
         f.write(driver.page_source)
     driver.quit()
 
+    current_app.logger.info("Saving tolmachevo tables finished in %s sec" % format(time.time() - start_time, '.2f'))
+
 
 def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_date: str,
                 airport_iata: str, is_dep: bool, vessel: str, company: str):
+
+
     fid = fn_umber + str(sh_date.split(".", 1)[1]) + str(sh_date.split(".", 1)[0])
     sh_date = dt.date(dt.date.today().year, month=int(sh_date.split(".", 1)[1]), day=int(sh_date.split(".", 1)[0]))
     sh_time = dt.time(int(sh_time.split(":", 1)[0]), int(sh_time.split(":", 1)[1]))
@@ -94,6 +108,9 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
 
 
 def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+    start_time = time.time()
+    current_app.logger.info("Parsing tolmachevo tables started")
+
     target = destination + "/" + name + ".html"
     html_file = open(target, "r")
     index = html_file.read()
@@ -123,3 +140,5 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 company = delete_spaces(item_data)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
+
+    current_app.logger.info("Parsing tolmachevo tables finished in %s sec" % format(time.time() - start_time, '.2f'))
