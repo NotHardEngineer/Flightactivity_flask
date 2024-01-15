@@ -10,6 +10,7 @@ services:
       - default
   web:
     image: nothardengineer/flightactivity:dev_14-01-2024
+#    build: .
     ports:
       - "5000:5000"
     depends_on:

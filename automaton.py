@@ -1,5 +1,6 @@
 from flask_apscheduler import APScheduler
 from flask import current_app
+import time
 
 from src.parsing import save_tolmachevo_tables, parse_saved_tolmachevo_html
 
@@ -18,9 +19,11 @@ def test_job():
     max_instances=1,
 )
 def update_db():
-    current_app.logger.info("Automatic update started")
     with scheduler.app.app_context():
+        start_time = time.time()
+        current_app.logger.info("Automatic update started")
         save_tolmachevo_tables()
         parse_saved_tolmachevo_html()
         parse_saved_tolmachevo_html(name="page_tomorrow")
-    current_app.logger.info("Automatic update finished")
+        current_app.logger.info("Automatic update finished in %s sec" % format(time.time() - start_time, '.2f'))
+
