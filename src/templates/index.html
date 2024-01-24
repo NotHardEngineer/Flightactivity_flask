@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             <h2>Все рейсы</h2>
-            <canvas id="activityChart1" width="400" height="200"></canvas>
+            <canvas id="allFlightsGraph" width="400" height="200"></canvas>
         </div>
     </div>
 
@@ -21,36 +21,35 @@
             <div class="list-group-item" id="scheduleAll">
 
                 <div id="scheduleAllExpander" data-target="#scheduleAllContent" data-toggle="collapse"
-                     data-group-id="scheduleAllGrandparent"
-                     data-role="scheduleAllExpander">
+                    data-group-id="scheduleAllGrandparent" data-role="scheduleAllExpander">
                     Посмотреть расписание
                 </div>
 
                 <div class="collapse" id="scheduleAllContent" aria-expanded="true">
                     <table class="table table-bordered table-striped">
                         <thead>
-                        <tr>
-                            <th>Время</th>
-                            <th>Номер рейса</th>
-                            <th>Компания</th>
-                            <th>Тип</th>
-                            <th>Судно</th>
-                        </tr>
+                            <tr>
+                                <th>Время</th>
+                                <th>Номер рейса</th>
+                                <th>Компания</th>
+                                <th>Тип</th>
+                                <th>Судно</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {%for hour, hour_flights in table_content_all.items()%}
+                            {%for hour, hour_flights in table_content_all.items()%}
                             <tr data-toggle="collapse" data-target=".allHour{{hour}}">
                                 <td>{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
-                                <tr class="collapse allHour{{hour}}">
-                                    {%for col in flight%}
+                            <tr class="collapse allHour{{hour}}">
+                                {%for col in flight%}
 
-                                    <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
-                                    {%endfor%}
-                                </tr>
+                                <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
+                                {%endfor%}
+                            </tr>
                             {%endfor%}
-                        {%endfor%}
+                            {%endfor%}
                         </tbody>
                     </table>
                 </div>
@@ -73,37 +72,36 @@
             <div class="list-group-item" id="scheduleArrive">
 
                 <div id="scheduleArriveExpander" data-target="#scheduleArriveContent" data-toggle="collapse"
-                     data-group-id="scheduleArriveGrandparent"
-                     data-role="scheduleArriveExpander">
+                    data-group-id="scheduleArriveGrandparent" data-role="scheduleArriveExpander">
                     Посмотреть расписание
                 </div>
 
                 <div class="collapse" id="scheduleArriveContent" aria-expanded="true">
                     <table class="table table-bordered table-striped">
                         <thead>
-                        <tr>
-                            <th>Время</th>
-                            <th>Номер рейса</th>
-                            <th>Компания</th>
-                            <th>Судно</th>
-                        </tr>
+                            <tr>
+                                <th>Время</th>
+                                <th>Номер рейса</th>
+                                <th>Компания</th>
+                                <th>Судно</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {%for hour, hour_flights in table_content_arr.items()%}
-                        <tr data-toggle="collapse" data-target=".arriveHour{{hour}}">
-                            <td>{{ hour }}:00 - {{hour + 1}}:00</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        {%for flight in hour_flights%}
-                        <tr class="collapse arriveHour{{hour}}">
-                            {%for col in flight%}
-                            <td>{{col}}</td>
+                            {%for hour, hour_flights in table_content_arr.items()%}
+                            <tr data-toggle="collapse" data-target=".arriveHour{{hour}}">
+                                <td>{{ hour }}:00 - {{hour + 1}}:00</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {%for flight in hour_flights%}
+                            <tr class="collapse arriveHour{{hour}}">
+                                {%for col in flight%}
+                                <td>{{col}}</td>
+                                {%endfor%}
+                            </tr>
                             {%endfor%}
-                        </tr>
-                        {%endfor%}
-                        {%endfor%}
+                            {%endfor%}
                         </tbody>
                     </table>
                 </div>
@@ -117,7 +115,7 @@
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             <h2>Улетающие рейсы</h2>
             <canvas id="activityChart3" width="400" height="200"></canvas>
-        </div>
+        </div>2
     </div>
 
 
@@ -127,37 +125,36 @@
             <div class="list-group-item" id="scheduleDepart">
 
                 <div id="scheduleDepartExpander" data-target="#scheduleDepartContent" data-toggle="collapse"
-                     data-group-id="scheduleDepartGrandparent"
-                     data-role="scheduleDepartExpander">
+                    data-group-id="scheduleDepartGrandparent" data-role="scheduleDepartExpander">
                     Посмотреть расписание
                 </div>
 
                 <div class="collapse" id="scheduleDepartContent" aria-expanded="true">
                     <table class="table table-bordered table-striped">
                         <thead>
-                        <tr>
-                            <th>Время</th>
-                            <th>Номер рейса</th>
-                            <th>Компания</th>
-                            <th>Судно</th>
-                        </tr>
+                            <tr>
+                                <th>Время</th>
+                                <th>Номер рейса</th>
+                                <th>Компания</th>
+                                <th>Судно</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {%for hour, hour_flights in table_content_dep.items()%}
-                        <tr data-toggle="collapse" data-target=".departHour{{hour}}">
-                            <td>{{ hour }}:00 - {{hour + 1}}:00</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        {%for flight in hour_flights%}
-                        <tr class="collapse departHour{{hour}}">
-                            {%for col in flight%}
-                            <td>{{col}}</td>
+                            {%for hour, hour_flights in table_content_dep.items()%}
+                            <tr data-toggle="collapse" data-target=".departHour{{hour}}">
+                                <td>{{ hour }}:00 - {{hour + 1}}:00</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {%for flight in hour_flights%}
+                            <tr class="collapse departHour{{hour}}">
+                                {%for col in flight%}
+                                <td>{{col}}</td>
+                                {%endfor%}
+                            </tr>
                             {%endfor%}
-                        </tr>
-                        {%endfor%}
-                        {%endfor%}
+                            {%endfor%}
                         </tbody>
                     </table>
                 </div>
@@ -170,13 +167,14 @@
 </div>
 
 <script>
-    var data_all = JSON.parse('{{ data.data_all }}');
-    var data_dep = JSON.parse('{{ data.data_dep }}');
-    var data_arr = JSON.parse('{{ data.data_arr }}');
-    // Activity 1 Line Chart
-    var maxYScale = Math.max(...data_all) + 1
-    var ctxActivity1 = document.getElementById('activityChart1').getContext('2d');
-    var activityChart1 = new Chart(ctxActivity1, {
+    let data_all = JSON.parse('{{ data.data_all }}');
+    let data_dep = JSON.parse('{{ data.data_dep }}');
+    let data_arr = JSON.parse('{{ data.data_arr }}');
+    // All Flights bar Chart
+    let maxYScale = Math.max(...data_all) + 1
+    let AllFlightsGraphCanvas = document.getElementById('allFlightsGraph')
+    let allFlightsGraphCtx = AllFlightsGraphCanvas.getContext('2d');
+    let allFlightsGraph = new Chart(allFlightsGraphCtx, {
         type: 'bar',
         data: {
             labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
@@ -194,7 +192,7 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    {#stacked: true,#}
+                    stacked: true,
                     min: 0,
                     max: maxYScale,
                     ticks: {
@@ -204,16 +202,31 @@
                 },
                 x: {
                     beginAtZero: true,
-                    {#stacked: true#}
+                    stacked: true
                 }
-            }
+            },
         }
     });
+    AllFlightsGraphCanvas.onclick = (evt) => {
+        const res = AllFlightsGraphCanvas.getElementsAtEventForMode(
+            evt,
+            'nearest',
+            { intersect: true },
+            true
+        );
+        // If didn't click on a bar, `res` will be an empty array
+        if (res.length === 0) {
+            return;
+        }
+        // Alerts "You clicked on A" if you click the "A" chart
+        alert('You clicked on ' + AllFlightsGraphCanvas.data.labels[res[0].index]);
+    };
 
-    // Activity 2 Line Chart
+
+    // Activity 2 bar Chart
     maxYScale = Math.max(...data_arr) + 1
-    var ctxActivity2 = document.getElementById('activityChart2').getContext('2d');
-    var activityChart2 = new Chart(ctxActivity2, {
+    let ctxActivity2 = document.getElementById('activityChart2').getContext('2d');
+    let activityChart2 = new Chart(ctxActivity2, {
         type: 'bar',
         data: {
             labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
@@ -230,7 +243,7 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    {#stacked: true,#}
+                    stacked: true,
                     min: 0,
                     max: maxYScale,
                     ticks: {
@@ -240,16 +253,16 @@
                 },
                 x: {
                     beginAtZero: true,
-                    {#stacked: true#}
+                    stacked: true
                 }
             }
         }
     });
 
-    // Activity 3 Line Chart
+    // Activity 3 bar Chart
     maxYScale = Math.max(...data_dep) + 1
-    var ctxActivity3 = document.getElementById('activityChart3').getContext('2d');
-    var activityChart3 = new Chart(ctxActivity3, {
+    let ctxActivity3 = document.getElementById('activityChart3').getContext('2d');
+    let activityChart3 = new Chart(ctxActivity3, {
         type: 'bar',
         data: {
             labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
@@ -266,7 +279,7 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    {#stacked: true,#}
+                    stacked: true,
                     min: 0,
                     max: maxYScale,
                     ticks: {
@@ -276,7 +289,7 @@
                 },
                 x: {
                     beginAtZero: true,
-                    {#stacked: true#}
+                    stacked: true
                 }
             }
         }
