@@ -137,11 +137,12 @@ def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), na
         driver.quit()
 
         current_app.logger.info("Saving tolmachevo tables finished in %s sec" % format(time.time() - start_time, '.2f'))
-    except selenium.common.exceptions.WebDriverException:
-        current_app.logger.error("Saving tolmachevo tables failed in %s sec" % format(time.time() - start_time, '.2f'))
+    except selenium.common.exceptions.WebDriverException as e:
+        current_app.logger.error("Saving tolmachevo tables failed in %s sec" % format(time.time() - start_time, '.2f'), exc_info=e)
 
 
 def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+    items = 0
     start_time = time.time()
     current_app.logger.info("Parsing tolmachevo tables started")
 
@@ -174,5 +175,6 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 company = delete_spaces(item_data)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
+        items += 1
 
-    current_app.logger.info("Parsing tolmachevo tables finished in %s sec" % format(time.time() - start_time, '.2f'))
+    current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items writen/updated" % (format(time.time() - start_time, '.2f'), items))
