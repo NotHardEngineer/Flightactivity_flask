@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="collapse" id="scheduleAllContent" aria-expanded="true">
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Время</th>
@@ -38,11 +38,11 @@
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_all.items()%}
-                            <tr data-toggle="collapse" data-target=".allHour{{hour}}">
-                                <td>{{ hour }}:00 - {{hour + 1}}:00</td>
+                            <tr>
+                                <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
-                            <tr class="collapse allHour{{hour}}">
+                            <tr >
                                 {%for col in flight%}
 
                                 <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="collapse" id="scheduleArriveContent" aria-expanded="true">
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Время</th>
@@ -88,14 +88,11 @@
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_arr.items()%}
-                            <tr data-toggle="collapse" data-target=".arriveHour{{hour}}">
-                                <td>{{ hour }}:00 - {{hour + 1}}:00</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                            <tr>
+                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
-                            <tr class="collapse arriveHour{{hour}}">
+                            <tr>
                                 {%for col in flight%}
                                 <td>{{col}}</td>
                                 {%endfor%}
@@ -115,7 +112,7 @@
         <div class="col-md-6 col-md-offset-3 col-xs-12">
             <h2>Улетающие рейсы</h2>
             <canvas id="activityChart3" width="400" height="200"></canvas>
-        </div>2
+        </div>
     </div>
 
 
@@ -130,7 +127,7 @@
                 </div>
 
                 <div class="collapse" id="scheduleDepartContent" aria-expanded="true">
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>Время</th>
@@ -141,14 +138,11 @@
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_dep.items()%}
-                            <tr data-toggle="collapse" data-target=".departHour{{hour}}">
-                                <td>{{ hour }}:00 - {{hour + 1}}:00</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                            <tr>
+                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
-                            <tr class="collapse departHour{{hour}}">
+                            <tr>
                                 {%for col in flight%}
                                 <td>{{col}}</td>
                                 {%endfor%}
@@ -207,20 +201,6 @@
             },
         }
     });
-    AllFlightsGraphCanvas.onclick = (evt) => {
-        const res = AllFlightsGraphCanvas.getElementsAtEventForMode(
-            evt,
-            'nearest',
-            { intersect: true },
-            true
-        );
-        // If didn't click on a bar, `res` will be an empty array
-        if (res.length === 0) {
-            return;
-        }
-        // Alerts "You clicked on A" if you click the "A" chart
-        alert('You clicked on ' + AllFlightsGraphCanvas.data.labels[res[0].index]);
-    };
 
 
     // Activity 2 bar Chart

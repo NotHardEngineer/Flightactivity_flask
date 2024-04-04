@@ -88,25 +88,23 @@
         
         for (const [hour, hour_flights] of Object.entries(tables_content[i])) {
             let hourTr = document.createElement('tr')
-            hourTr.dataset.toggle = "collapse"
-            hourTr.dataset.target = "." + company.replaceAll(' ', '') + hour
             tbody.appendChild(hourTr)
 
             let td = document.createElement('td')
+            td.colSpan = "5"
             td.textContent = hour + ':00 - ' + (Number(hour)+1) + ":00"
             hourTr.appendChild(td)
 
             for (let k = 0; k < hour_flights.length; k++){
                 let flight = hour_flights[k]
                 let flightTr = document.createElement('tr')
-                flightTr.style.backgroundColor = 'rgba(255, 99, 132, 0.2)';
-                flightTr.classList.add("collapse", company.replaceAll(' ', '') + hour)
+                flightTr.style.backgroundColor = 'rgba(255, 99, 132, 0.1)';
                 tbody.appendChild(flightTr)
 
                 for (let j = 0; j < flight.length; j++){
                     let td = document.createElement('td')
                     if (String(flight[j]) == 'true'){
-                        flightTr.style.backgroundColor = 'rgba(75, 192, 192, 0.2)';
+                        flightTr.style.backgroundColor = 'rgba(75, 192, 192, 0.1)';
                     }
                     td.textContent = String(flight[j]).replaceAll('true', 'Вылет').replaceAll('false', 'Прилет')
                     flightTr.appendChild(td)

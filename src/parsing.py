@@ -177,4 +177,4 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
         items += 1
 
-    current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items writen/updated" % (format(time.time() - start_time, '.2f'), items))
+    current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))
