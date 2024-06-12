@@ -1,3 +1,7 @@
 @-ms-viewport{
     width: device-width;
 }
+
+td[colspan]:not([colspan="1"]) {
+    text-align: center;
+}
