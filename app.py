@@ -1,12 +1,44 @@
 import os
 
 from flask import Flask
-# from flask_admin import Admin
-# from flask_admin.contrib.sqla import ModelView
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 from src import db, main, parsing
 from src.models import Flights, Companies
 import automaton
+
+from logging.config import dictConfig
+
+dictConfig({
+    "version": 1,
+    "formatters": {
+        "default": {
+            "format": "[%(asctime)s] %(levelname)s | %(module)s >>> %(message)s"
+        }
+    },
+
+    'handlers': {
+        'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        },
+        "file-rotate": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "flask.log",
+            "maxBytes": 1000000,
+            "backupCount": 5,
+            "formatter": "default",
+
+        },
+    },
+
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi', 'file-rotate']
+    }
+})
 
 
 class Config:
@@ -45,12 +77,18 @@ def create_app(config_class):
 
     app.register_blueprint(main.bp_main)
     app.register_blueprint(parsing.bp_parsing)
+
     # admin = Admin(app, name='delete on prod', template_mode='bootstrap3')
     # admin.add_view(ModelView(Flights, db.session))
     # admin.add_view(ModelView(Companies, db.session))
 
     @app.route("/hello")
     def hello():
+        app.logger.debug("A hello logger debug message")
+        app.logger.info("A hello logger info message")
+        app.logger.warning("A hello logger warning message")
+        app.logger.error("A hello logger error message")
+        app.logger.critical("A hello logger critical message")
         print("Hello, World!")
         return "Hello, World!"
 
