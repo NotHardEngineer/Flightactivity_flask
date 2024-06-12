@@ -9,48 +9,48 @@
 </div>
 <script>
 
-    let graphsContainer = document.getElementById('graphsContainer');
+    var graphsContainer = document.getElementById('graphsContainer');
 
-    let labels= {{ labels|safe }};
-    let companies = {{ companies|safe }};
-    let tables_content = {{tables_content|safe}};
-    let all_dep = {{ all_dep }};
-    let all_arr = {{ all_arr }};
-    let companyCount = companies.length;
+    var labels= {{ labels|safe }};
+    var companies = {{ companies|safe }};
+    var tables_content = {{tables_content|safe}};
+    var all_dep = {{ all_dep }};
+    var all_arr = {{ all_arr }};
+    var companyCount = companies.length;
 
-    for (let i = 0; i < companyCount; i++) {
+    for (var i = 0; i < companyCount; i++) {
 
         company = companies[i]
-        let row = document.createElement('div');
+        var row = document.createElement('div');
         row.classList.add('row');
         graphsContainer.appendChild(row);
 
-        let col = document.createElement('div');
+        var col = document.createElement('div');
         col.classList.add('col-md-6', 'col-md-offset-3', 'col-xs-12');
         row.appendChild(col);
 
-        let h2 = document.createElement('h2');
+        var h2 = document.createElement('h2');
         h2.innerText = company;
         col.appendChild(h2);
 
-        let canvas = document.createElement('canvas');
+        var canvas = document.createElement('canvas');
         canvas.id = 'graph' + company;
         col.appendChild(canvas);
 
-        let tableRow = document.createElement('div');
+        var tableRow = document.createElement('div');
         tableRow.classList.add('row');
         graphsContainer.appendChild(tableRow);
 
-        let tableCol = document.createElement('div');
+        var tableCol = document.createElement('div');
         tableCol.classList.add('col-md-6', 'col-md-offset-3', 'col-xs-12', 'table-responsive');
         tableRow.appendChild(tableCol);
 
-        let tableList = document.createElement('div')
+        var tableList = document.createElement('div')
         tableList.classList.add('list-group-item')
         tableList.id = 'schedule' + company.replaceAll(' ', '')
         tableCol.appendChild(tableList)
 
-        let tableHeader = document.createElement('div')
+        var tableHeader = document.createElement('div')
         tableHeader.id = 'scheduleExpander' + company.replaceAll(' ', '')
         tableHeader.dataset.target = "#scheduleContent" + company.replaceAll(' ', '')
         tableHeader.dataset.toggle = 'collapse'
@@ -59,53 +59,51 @@
         tableHeader.textContent = "Показать расписание"
         tableList.appendChild(tableHeader)
 
-        let tableContent = document.createElement('div')
+        var tableContent = document.createElement('div')
         tableContent.classList.add('collapse')
         tableContent.id = 'scheduleContent' + company.replaceAll(' ', '')
         tableContent.ariaExpanded = 'true'
         tableList.appendChild(tableContent)
 
-        let table = document.createElement('table')
-        table.classList.add("table", "table-bordered")
+        var table = document.createElement('table')
+        table.classList.add("table", "table-bordered", "table-striped")
         tableContent.appendChild(table)
 
-        let thead = document.createElement('thead')
+        var thead = document.createElement('thead')
         table.appendChild(thead)
 
-        let headTr = document.createElement('tr')
+        var headTr = document.createElement('tr')
         thead.appendChild(headTr)
 
         
         header_list = ["Время", "Номер рейса", "Тип", "Судно"]
-        for (let j = 0; j < header_list.length; j++){
-            let th = document.createElement('th')
+        for (var j = 0; j < header_list.length; j++){
+            var th = document.createElement('th')
             th.textContent = header_list[j]
             headTr.appendChild(th)
         }
 
-        let tbody = document.createElement('tbody')
+        var tbody = document.createElement('tbody')
         table.appendChild(tbody)
         
         for (const [hour, hour_flights] of Object.entries(tables_content[i])) {
-            let hourTr = document.createElement('tr')
+            var hourTr = document.createElement('tr')
+            hourTr.dataset.toggle = "collapse"
+            hourTr.dataset.target = "." + company.replaceAll(' ', '') + hour
             tbody.appendChild(hourTr)
 
-            let td = document.createElement('td')
-            td.colSpan = "5"
+            var td = document.createElement('td')
             td.textContent = hour + ':00 - ' + (Number(hour)+1) + ":00"
             hourTr.appendChild(td)
 
-            for (let k = 0; k < hour_flights.length; k++){
-                let flight = hour_flights[k]
-                let flightTr = document.createElement('tr')
-                flightTr.style.backgroundColor = 'rgba(255, 99, 132, 0.1)';
+            for (var k = 0; k < hour_flights.length; k++){
+                var flight = hour_flights[k]
+                var flightTr = document.createElement('tr')
+                flightTr.classList.add("collapse", company.replaceAll(' ', '') + hour)
                 tbody.appendChild(flightTr)
 
-                for (let j = 0; j < flight.length; j++){
-                    let td = document.createElement('td')
-                    if (String(flight[j]) == 'true'){
-                        flightTr.style.backgroundColor = 'rgba(75, 192, 192, 0.1)';
-                    }
+                for (var j = 0; j < flight.length; j++){
+                    var td = document.createElement('td')
                     td.textContent = String(flight[j]).replaceAll('true', 'Вылет').replaceAll('false', 'Прилет')
                     flightTr.appendChild(td)
                 }
@@ -114,9 +112,9 @@
         }
 
 
-        let maxYScale = Math.max(Math.max(...all_dep[i]), Math.max(...all_arr[i])) + 1;
-        let ctx = canvas.getContext('2d');
-        let chart = new Chart(ctx, {
+        var maxYScale = Math.max(Math.max(...all_dep[i]), Math.max(...all_arr[i])) + 1;
+        var ctx = canvas.getContext('2d');
+        var chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels[i],
@@ -160,7 +158,7 @@
         });
 
         // Adjust the width and height of the chart container
-        let chartContainer = document.getElementById('graph' + company).parentElement;
+        var chartContainer = document.getElementById('graph' + company).parentElement;
         chartContainer.classList.add('container');
         // Update the chart layout
         chart.resize();

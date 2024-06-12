@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import time
 import datetime as dt
 
-import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -14,8 +13,7 @@ from pathlib import Path
 from flask import (
     Blueprint,
     url_for,
-    redirect,
-    current_app
+    redirect
 )
 
 from src.models import session_db, Flights, Companies
@@ -27,125 +25,75 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 
 @bp_parsing.route("/")
 def update_tolmachevo():
-    start_time = time.time()
-    current_app.logger.info("Update requested")
-
     save_tolmachevo_tables()
     parse_saved_tolmachevo_html()
     parse_saved_tolmachevo_html(name="page_tomorrow")
-
-    current_app.logger.info("Update finished in %s sec" % format(time.time() - start_time, '.2f'))
-
     return redirect(url_for('main.main'))
+
+
+def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    url_to_save = 'https://tolmachevo.ru/passengers/information/timetable'
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--window-size=1920,1080')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.get(url_to_save)
+    element = WebDriverWait(driver, timeout=20, poll_frequency=1) \
+        .until(lambda d: d.find_element(By.XPATH,
+                                        "/html/body/div[3]/div[3]/section/div/div/section/header/div[2]/span[3]"))
+    with open(destination + "/" + name + ".html", "w", encoding='utf-8') as f:
+        f.write(driver.page_source)
+    element.click()
+
+    time.sleep(1)  # ПЕРЕДЕЛАТЬ ПОЗЖЕ НА АСИНХРОНКУ
+
+    with open(destination + "/" + name + "_tomorrow.html", "w", encoding='utf-8') as f:
+        f.write(driver.page_source)
+    driver.quit()
 
 
 def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_date: str,
                 airport_iata: str, is_dep: bool, vessel: str, company: str):
-
-    old_fid = fn_umber + str(sh_date.split(".", 1)[1]) + str(sh_date.split(".", 1)[0])
-
+    fid = fn_umber + str(sh_date.split(".", 1)[1]) + str(sh_date.split(".", 1)[0])
     sh_date = dt.date(dt.date.today().year, month=int(sh_date.split(".", 1)[1]), day=int(sh_date.split(".", 1)[0]))
     sh_time = dt.time(int(sh_time.split(":", 1)[0]), int(sh_time.split(":", 1)[1]))
 
     eta_date = dt.date(dt.date.today().year, month=int(eta_date.split(".", 1)[1]), day=int(eta_date.split(".", 1)[0]))
     eta_time = dt.time(int(eta_time.split(":", 1)[0]), int(eta_time.split(":", 1)[1]))
 
-    new_fid = fn_umber.replace(" ", "-") + "_" + str(sh_date)
-
     with session_db() as s:
         exist_company = s.query(Companies).filter(Companies.name == company).first()
         if not exist_company:
             s.add(Companies(name=company))
-
-        exist_flight = s.query(Flights).filter(Flights.fid == old_fid).first()
+        exist_flight = s.query(Flights).filter(Flights.fid == fid).first()
         if exist_flight:
-            exist_flight.fid = new_fid
             exist_flight.et_time = eta_time
             exist_flight.et_date = eta_date
             exist_flight.vessel_model = vessel
             s.add(exist_flight)
         else:
-            exist_flight = s.query(Flights).filter(Flights.fid == new_fid).first()
-            if exist_flight:
-                exist_flight.et_time = eta_time
-                exist_flight.et_date = eta_date
-                exist_flight.vessel_model = vessel
-                s.add(exist_flight)
-            else:
-                f = Flights(
-                    fid=new_fid,
-                    number=fn_umber,
-                    sh_time=sh_time,
-                    sh_date=sh_date,
-                    et_time=eta_time,
-                    et_date=eta_date,
-                    airport_iata=airport_iata,
-                    is_depart=is_dep,
-                    vessel_type='plane',
-                    vessel_model=vessel,
-                    company=company)
-                s.add(f)
+            f = Flights(
+                fid=fid,
+                number=fn_umber,
+                sh_time=sh_time,
+                sh_date=sh_date,
+                et_time=eta_time,
+                et_date=eta_date,
+                airport_iata=airport_iata,
+                is_depart=is_dep,
+                vessel_type='plane',
+                vessel_model=vessel,
+                company=company)
+            s.add(f)
 
         s.commit()
-
-
-@bp_parsing.route("/updatefids")
-def update_fids():
-    start_time = time.time()
-    current_app.logger.info("FID update started")
-
-    with session_db() as s:
-        flights = s.query(Flights)
-        for flight in flights:
-            new_fid = flight.number.replace(" ", "-") + "_" + str(flight.sh_date)
-            flight.fid = new_fid
-            s.add(flight)
-        s.commit()
-
-    current_app.logger.info("Updating FIDs finished in %s sec" % format(time.time() - start_time, '.2f'))
-    return redirect(url_for('main.main'))
-
-
-
-def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
-    start_time = time.time()
-    current_app.logger.info("Saving tolmachevo tables started")
-
-    if not os.path.exists(destination):
-        os.makedirs(destination)
-    url_to_save = 'https://tolmachevo.ru/passengers/information/timetable'
-
-    try:
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--window-size=1920,1080')
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.get(url_to_save)
-        element = WebDriverWait(driver, timeout=20, poll_frequency=1) \
-            .until(lambda d: d.find_element(By.XPATH,
-                                            "/html/body/div[3]/div[3]/section/div/div/section/header/div[2]/span[3]"))
-        with open(destination + "/" + name + ".html", "w", encoding='utf-8') as f:
-            f.write(driver.page_source)
-        element.click()
-
-        time.sleep(1)  # ПЕРЕДЕЛАТЬ ПОЗЖЕ НА АСИНХРОНКУ
-
-        with open(destination + "/" + name + "_tomorrow.html", "w", encoding='utf-8') as f:
-            f.write(driver.page_source)
-        driver.quit()
-
-        current_app.logger.info("Saving tolmachevo tables finished in %s sec" % format(time.time() - start_time, '.2f'))
-    except selenium.common.exceptions.WebDriverException as e:
-        current_app.logger.error("Saving tolmachevo tables failed in %s sec" % format(time.time() - start_time, '.2f'), exc_info=e)
 
 
 def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
-    items = 0
-    start_time = time.time()
-    current_app.logger.info("Parsing tolmachevo tables started")
-
     target = destination + "/" + name + ".html"
     html_file = open(target, "r")
     index = html_file.read()
@@ -175,6 +123,3 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 company = delete_spaces(item_data)
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
-        items += 1
-
-    current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))

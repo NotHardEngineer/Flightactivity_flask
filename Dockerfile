@@ -1,6 +1,6 @@
 FROM python:3.10
 
-WORKDIR /app-dev
+WORKDIR /python-docker
 COPY requirements.txt requirements.txt
 # install google chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
