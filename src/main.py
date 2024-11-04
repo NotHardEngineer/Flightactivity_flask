@@ -4,7 +4,9 @@ from flask import (
     Blueprint,
     render_template,
     request,
-    current_app
+    current_app,
+    flash,
+    g
 )
 from datetime import datetime
 import time
@@ -83,6 +85,7 @@ def main():
                                    )
         else:
             current_app.logger.info("Main page without data returned in %s sec" % format(time.time() - start_time, '.2f'))
+            flash("Данные за выбранную дату не найдены, пожалуйста, попробуйте позже или выберите другую дату")
             return render_template("nodata.html")
 
 

@@ -22,7 +22,7 @@
 
 <body>
 
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default">
     <div class="container-fluid">
 
         <div class="navbar-header">
@@ -70,8 +70,22 @@
     document.getElementById("flights_date").defaultValue = date;
 </script>
 
-{%block content%}
-{%endblock%}
+<div class="container-fluid">
+    {% for message in get_flashed_messages() %}
+    <div class="row">
+        <div class="flash">{{ message }}</div>
+    </div>
+    {% endfor %}
+
+
+
+    
+</div>
+<div class="container-fluid content">
+
+{% block content %}{% endblock %}
+</div>
+
 </body>
 
 </html>
