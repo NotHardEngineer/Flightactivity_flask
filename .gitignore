@@ -1,7 +1,6 @@
 /venv/
 /.idea/
-/saved_pages/page.html
-/saved_pages/page_tomorrow.html
+/saved_pages/
 /instance/
 /migrations/
 __pycache__
