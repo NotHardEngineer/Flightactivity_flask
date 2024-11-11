@@ -28,11 +28,15 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 @bp_parsing.route("/")
 def update_tolmachevo():
     start_time = time.time()
-    current_app.logger.info("Update requested")
+    current_app.logger.info("Full update requested")
+
+    save_airportbaikal_tables()
+    parse_saved_airport_baikal_html()
+    parse_saved_airport_baikal_html(name="baikal_page_tomorrow")
 
     save_tolmachevo_tables()
     parse_saved_tolmachevo_html()
-    parse_saved_tolmachevo_html(name="page_tomorrow")
+    parse_saved_tolmachevo_html(name="tolmachevo_page_tomorrow")
 
     current_app.logger.info("Update finished in %s sec" % format(time.time() - start_time, '.2f'))
 
@@ -107,7 +111,7 @@ def update_fids():
 
 
 
-def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='tolmachevo_page'):
     start_time = time.time()
     current_app.logger.info("Saving tolmachevo tables started")
 
@@ -123,7 +127,7 @@ def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), na
         chrome_options.add_argument('--disable-gpu')
         driver = webdriver.Chrome(options=chrome_options)
         driver.get(url_to_save)
-        element = WebDriverWait(driver, timeout=20, poll_frequency=1) \
+        element = WebDriverWait(driver, timeout=100, poll_frequency=1) \
             .until(lambda d: d.find_element(By.XPATH,
                                             "/html/body/div[3]/div[3]/section/div/div/section/header/div[2]/span[3]"))
         with open(destination + "/" + name + ".html", "w", encoding='utf-8') as f:
@@ -141,7 +145,42 @@ def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), na
         current_app.logger.error("Saving tolmachevo tables failed in %s sec" % format(time.time() - start_time, '.2f'), exc_info=e)
 
 
-def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='page'):
+def save_airportbaikal_tables(destination=os.path.join(BASE_DIR, "saved_pages"), name='baikal_page'):
+    start_time = time.time()
+    current_app.logger.info("Saving airportbaikal tables started")
+
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+    url_to_save = 'https://airportbaikal.ru/passengers/information/timetable'
+
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--window-size=1920,1080')
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-gpu')
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get(url_to_save)
+        element = WebDriverWait(driver, timeout=20, poll_frequency=1) \
+            .until(lambda d: d.find_element(By.XPATH,
+                                            "/html/body/div[2]/div[4]/section/div/div/section/header/div[2]/span[3]"))
+        with open(destination + "/" + name + ".html", "w", encoding='utf-8') as f:
+            f.write(driver.page_source)
+        element.click()
+
+        time.sleep(1)  # ПЕРЕДЕЛАТЬ ПОЗЖЕ НА АСИНХРОНКУ
+
+        with open(destination + "/" + name + "_tomorrow.html", "w", encoding='utf-8') as f:
+            f.write(driver.page_source)
+        driver.quit()
+
+        current_app.logger.info("Saving baikal tables finished in %s sec" % format(time.time() - start_time, '.2f'))
+    except selenium.common.exceptions.WebDriverException as e:
+        current_app.logger.error("Saving baikal tables failed in %s sec" % format(time.time() - start_time, '.2f'), exc_info=e)
+
+
+
+def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='tolmachevo_page'):
     items = 0
     start_time = time.time()
     current_app.logger.info("Parsing tolmachevo tables started")
@@ -178,3 +217,42 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
         items += 1
 
     current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))
+
+
+def parse_saved_airport_baikal_html(destination=os.path.join(BASE_DIR, "saved_pages"), name='baikal_page'):
+    items = 0
+    start_time = time.time()
+    current_app.logger.info("Parsing airport_baikal tables started")
+
+    target = destination + "/" + name + ".html"
+    html_file = open(target, "r")
+    index = html_file.read()
+    parse = BeautifulSoup(index, 'lxml')
+
+    for flight in parse.find_all('article', class_='flight-item'):
+        is_dep = False
+        number, s_time, s_date, e_time, e_date, vessel_type, company = ['' for _ in range(7)]
+        flightdata = [i.text.lower() for i in list(flight.find_all("li"))]
+        for item in flightdata:
+            item_title, item_data = item.split(":", 1)
+            if "расчетное время" in item_title:
+                e_time, e_date = item_data.split(",", 1)
+                e_time = delete_spaces(e_time)
+                e_date = delete_spaces(e_date)
+            elif "посадка" in item_title:
+                is_dep = True
+            elif "тип вс" in item_title:
+                vessel_type = delete_spaces(item_data)
+            elif "по расписанию" in item_title:
+                s_time, s_date = item_data.split(",", 1)
+                s_time = delete_spaces(s_time)
+                s_date = delete_spaces(s_date)
+            elif "номер рейса" in item_title:
+                number = delete_spaces(item_data)
+            elif "компания" in item_title:
+                company = delete_spaces(item_data)
+        write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
+                    airport_iata='uud', is_dep=is_dep, vessel=vessel_type, company=company)
+        items += 1
+
+    current_app.logger.info("Parsing airport_baikal tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))

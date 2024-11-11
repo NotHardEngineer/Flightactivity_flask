@@ -24,17 +24,25 @@ def main():
     start_time = time.time()
     current_app.logger.info("Main page requested")
 
+    airport_to_seek = 'obv'
+    day_to_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     if request.method == 'POST':
-        day_for_seek = request.form['flights_date']
-    else:
-        day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+        forms = request.form
+        print(forms)
+        if 'flights_date' in forms:
+            day_to_seek = request.form['flights_date']
+        if 'flights_port' in forms:
+            airport_to_seek = request.form['flights_port']
+        
+        
+        
     with session_db() as s:
         table_content_dep = {}
         table_content_arr = {}
         table_content_all = {}
 
         all_flights = s.query(Flights). \
-            filter(Flights.et_date == day_for_seek). \
+            filter(Flights.et_date == day_to_seek, Flights.airport_iata == airport_to_seek). \
             with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model). \
             order_by(Flights.et_time)
 
@@ -72,16 +80,17 @@ def main():
                 'data_dep': count_by_hours_dep,
                 'data_arr': count_by_hours_arr
             }
-            date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
+            date_for_show = datetime.strptime(day_to_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
             current_app.logger.info("Main page returned in %s sec" % format(time.time() - start_time, '.2f'))
             return render_template("index.html",
-                                   title="Самолеты в толмачево",
+                                   title=f"Самолеты в {airport_to_seek}",
                                    data=data,
                                    table_content_all=table_content_all,
                                    table_content_dep=table_content_dep,
                                    table_content_arr=table_content_arr,
                                    date_for_show=date_for_show,
-                                   date=day_for_seek
+                                   date=day_to_seek,
+                                   port = airport_to_seek
                                    )
         else:
             current_app.logger.info("Main page without data returned in %s sec" % format(time.time() - start_time, '.2f'))
@@ -98,13 +107,19 @@ def companies():
                       '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00',
                       '22:00', '23:00']
 
+    airport_to_seek = 'obv'
+    day_to_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     if request.method == 'POST':
-        day_for_seek = request.form['flights_date']
-    else:
-        day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+        forms = request.form
+        print(forms)
+        if 'flights_date' in forms:
+            day_to_seek = request.form['flights_date']
+        if 'flights_port' in forms:
+            airport_to_seek = request.form['flights_port']
+
     with session_db() as s:
         all_flights = s.query(Flights). \
-            filter(Flights.et_date == day_for_seek). \
+            filter(Flights.et_date == day_to_seek, Flights.airport_iata == airport_to_seek). \
             with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model)
 
         companies_list = [i[0] for i in all_flights.with_entities(Flights.company).distinct()]
@@ -160,17 +175,18 @@ def companies():
                 all_dep.append(count_by_hours_dep)
                 all_labels.append(company_hour_labels)
                 all_tables_content.append(company_table_content)
-            date_for_show = datetime.strptime(day_for_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
+            date_for_show = datetime.strptime(day_to_seek, '%Y-%m-%d').strftime('%d.%m.%Y')
             current_app.logger.info("Company page returned in %s sec" % format(time.time() - start_time, '.2f'))
             return render_template("companies.html",
-                                   title="Авиакомпании в толмачево",
+                                   title=f"Авиакомпании в {airport_to_seek}",
                                    companies=json.dumps(companies_list),
                                    labels=json.dumps(all_labels),
                                    tables_content=json.dumps(all_tables_content),
                                    all_arr=all_arr,
                                    all_dep=all_dep,
                                    date_for_show=date_for_show,
-                                   date=day_for_seek)
+                                   date=day_to_seek,
+                                   port=airport_to_seek)
 
         else:
             current_app.logger.info("Company page without data returned in %s sec" % format(time.time() - start_time, '.2f'))

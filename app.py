@@ -58,7 +58,8 @@ def create_app(config_class):
 
     scheduler = automaton.scheduler
     scheduler.init_app(app)
-    scheduler.start()
+    # scheduler.start()
+    
     app.config.from_object(config_class)
     app.config["SECRET_KEY"] = "your_secret_key_here"
     db.init_app(app)
@@ -78,9 +79,11 @@ def create_app(config_class):
     app.register_blueprint(main.bp_main)
     app.register_blueprint(parsing.bp_parsing)
 
+
     # admin = Admin(app, name='delete on prod', template_mode='bootstrap3')
     # admin.add_view(ModelView(Flights, db.session))
     # admin.add_view(ModelView(Companies, db.session))
+
 
     @app.route("/hello")
     def hello():
