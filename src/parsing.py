@@ -26,7 +26,7 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 
 
 @bp_parsing.route("/")
-def update_tolmachevo():
+def update_all():
     start_time = time.time()
     current_app.logger.info("Full update requested")
 

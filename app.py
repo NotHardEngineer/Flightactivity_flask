@@ -58,7 +58,7 @@ def create_app(config_class):
 
     scheduler = automaton.scheduler
     scheduler.init_app(app)
-    # scheduler.start()
+    scheduler.start()
     
     app.config.from_object(config_class)
     app.config["SECRET_KEY"] = "your_secret_key_here"
