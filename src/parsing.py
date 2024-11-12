@@ -46,7 +46,7 @@ def update_all():
 def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_date: str,
                 airport_iata: str, is_dep: bool, vessel: str, company: str):
 
-    old_fid = fn_umber + str(sh_date.split(".", 1)[1]) + str(sh_date.split(".", 1)[0])
+    old_fid = fn_umber.replace(" ", "-") + "_" + str(sh_date)
 
     sh_date = dt.date(dt.date.today().year, month=int(sh_date.split(".", 1)[1]), day=int(sh_date.split(".", 1)[0]))
     sh_time = dt.time(int(sh_time.split(":", 1)[0]), int(sh_time.split(":", 1)[1]))
@@ -54,7 +54,7 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
     eta_date = dt.date(dt.date.today().year, month=int(eta_date.split(".", 1)[1]), day=int(eta_date.split(".", 1)[0]))
     eta_time = dt.time(int(eta_time.split(":", 1)[0]), int(eta_time.split(":", 1)[1]))
 
-    new_fid = fn_umber.replace(" ", "-") + "_" + str(sh_date)
+    new_fid = fn_umber.replace(" ", "-") + "_" + str(sh_date) + "_" + str(airport_iata)
 
     with session_db() as s:
         exist_company = s.query(Companies).filter(Companies.name == company).first()
@@ -101,7 +101,7 @@ def update_fids():
     with session_db() as s:
         flights = s.query(Flights)
         for flight in flights:
-            new_fid = flight.number.replace(" ", "-") + "_" + str(flight.sh_date)
+            new_fid = flight.number.replace(" ", "-") + "_" + str(flight.sh_date) + "_" + str(flight.airport_iata)
             flight.fid = new_fid
             s.add(flight)
         s.commit()
