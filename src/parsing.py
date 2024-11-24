@@ -196,7 +196,7 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
         flightdata = [i.text.lower() for i in list(flight.find_all("li"))]
         for item in flightdata:
             item_title, item_data = item.split(":", 1)
-            if "расчетное время" in item_title:
+            if "расчетное время" in item_title:     
                 e_time, e_date = item_data.split(",", 1)
                 e_time = delete_spaces(e_time)
                 e_date = delete_spaces(e_date)
@@ -212,9 +212,16 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 number = delete_spaces(item_data)
             elif "компания" in item_title:
                 company = delete_spaces(item_data)
+        if is_dep:
+            dep_port = flight.find_all("span", "tth-destination")[0].text.strip()
+            arr_port = "obv"
+        else:
+            dep_port = "obv"
+            arr_port = flight.find_all("span", "tth-destination")[0].text.strip()
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
                     airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
         items += 1
+        break
 
     current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))
 
