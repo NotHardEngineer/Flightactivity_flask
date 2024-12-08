@@ -80,9 +80,9 @@ def create_app(config_class):
     app.register_blueprint(parsing.bp_parsing)
 
 
-    admin = Admin(app, name='delete on prod', template_mode='bootstrap3')
-    admin.add_view(ModelView(Flights, db.session))
-    admin.add_view(ModelView(Companies, db.session))
+    # admin = Admin(app, name='delete on prod', template_mode='bootstrap3')
+    # admin.add_view(ModelView(Flights, db.session))
+    # admin.add_view(ModelView(Companies, db.session))
 
 
     @app.route("/hello")

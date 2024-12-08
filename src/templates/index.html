@@ -34,12 +34,13 @@
                                 <th>Компания</th>
                                 <th>Тип</th>
                                 <th>Судно</th>
+                                <th>Направление</th>
                             </tr>
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_all.items()%}
                             <tr>
-                                <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td>
+                                <td colspan="6">{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
                             <tr >
@@ -84,12 +85,13 @@
                                 <th>Номер рейса</th>
                                 <th>Компания</th>
                                 <th>Судно</th>
+                                <th>Направление</th>
                             </tr>
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_arr.items()%}
                             <tr>
-                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
+                                <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td>
                             </tr>
                             {%for flight in hour_flights%}
                             <tr>
@@ -134,12 +136,13 @@
                                 <th>Номер рейса</th>
                                 <th>Компания</th>
                                 <th>Судно</th>
+                                <th>Направление</th>
                             </tr>
                         </thead>
                         <tbody>
                             {%for hour, hour_flights in table_content_dep.items()%}
                             <tr>
-                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
+                                <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td> 
                             </tr>
                             {%for flight in hour_flights%}
                             <tr>

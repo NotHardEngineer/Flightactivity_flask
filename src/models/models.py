@@ -30,6 +30,7 @@ class Flights(db.Model):
     vessel_type = db.Column(db.String(255), default='unknown')
     vessel_model = db.Column(db.String(255), default='unknown')
     company = db.Column(db.String(255), db.ForeignKey("companies.name"), default='unknown')
+    destanation = db.Column(db.String(255), default='unknown')
 
     def __repr__(self):
         return f"Flight number {self.number} on {self.sh_date}, by {self.company}"

@@ -76,7 +76,7 @@
         thead.appendChild(headTr)
 
         
-        header_list = ["Время", "Номер рейса", "Тип", "Судно"]
+        header_list = ["Время", "Номер рейса", "Тип", "Судно", "Направление"]
         for (let j = 0; j < header_list.length; j++){
             let th = document.createElement('th')
             th.textContent = header_list[j]
@@ -91,7 +91,7 @@
             tbody.appendChild(hourTr)
 
             let td = document.createElement('td')
-            td.colSpan = "5"
+            td.colSpan = "6" // Можно определять динамически по длинне списка с заголовками
             td.textContent = hour + ':00 - ' + (Number(hour)+1) + ":00"
             hourTr.appendChild(td)
 

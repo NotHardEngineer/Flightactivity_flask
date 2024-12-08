@@ -44,7 +44,7 @@ def update_all():
 
 
 def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_date: str,
-                airport_iata: str, is_dep: bool, vessel: str, company: str):
+                airport_iata: str, is_dep: bool, vessel: str, company: str, flight_destination: str):
 
     old_fid = fn_umber.replace(" ", "-") + "_" + str(sh_date)
 
@@ -87,7 +87,8 @@ def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_da
                     is_depart=is_dep,
                     vessel_type='plane',
                     vessel_model=vessel,
-                    company=company)
+                    company=company,
+                    destanation=flight_destination)
                 s.add(f)
 
         s.commit()
@@ -212,16 +213,18 @@ def parse_saved_tolmachevo_html(destination=os.path.join(BASE_DIR, "saved_pages"
                 number = delete_spaces(item_data)
             elif "компания" in item_title:
                 company = delete_spaces(item_data)
-        if is_dep:
-            dep_port = flight.find_all("span", "tth-destination")[0].text.strip()
-            arr_port = "obv"
-        else:
-            dep_port = "obv"
-            arr_port = flight.find_all("span", "tth-destination")[0].text.strip()
+        flight_destination = flight.find_all("span", "tth-destination")[0].text.strip()
+        
+        # if is_dep:
+        #     dep_port = flight.find_all("span", "tth-destination")[0].text.strip()
+        #     arr_port = "obv"
+        # else:
+        #     dep_port = "obv"
+        #     arr_port = flight.find_all("span", "tth-destination")[0].text.strip()
+
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
-                    airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company)
+                    airport_iata='obv', is_dep=is_dep, vessel=vessel_type, company=company, flight_destination=flight_destination)
         items += 1
-        break
 
     current_app.logger.info("Parsing tolmachevo tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))
 
@@ -258,8 +261,9 @@ def parse_saved_airport_baikal_html(destination=os.path.join(BASE_DIR, "saved_pa
                 number = delete_spaces(item_data)
             elif "компания" in item_title:
                 company = delete_spaces(item_data)
+        flight_destination = flight.find_all("span", "tth-destination")[0].text.strip()
         write_in_db(fn_umber=number, sh_time=s_time, sh_date=s_date, eta_time=e_time, eta_date=e_date,
-                    airport_iata='uud', is_dep=is_dep, vessel=vessel_type, company=company)
+                    airport_iata='uud', is_dep=is_dep, vessel=vessel_type, company=company, flight_destination=flight_destination)
         items += 1
 
     current_app.logger.info("Parsing airport_baikal tables finished in %s sec, %i items parsed" % (format(time.time() - start_time, '.2f'), items))

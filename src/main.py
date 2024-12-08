@@ -43,7 +43,7 @@ def main():
 
         all_flights = s.query(Flights). \
             filter(Flights.et_date == day_to_seek, Flights.airport_iata == airport_to_seek). \
-            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model). \
+            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model, Flights.destanation). \
             order_by(Flights.et_time)
 
         if all_flights.count() > 0:
@@ -67,13 +67,13 @@ def main():
                 for flight in all_hour_flights:
                     table_content_all[i].append(
                         [flight.et_time.strftime('%H:%M'), flight.number, flight.company, str(flight.is_depart),
-                         flight.vessel_model])
+                         flight.vessel_model, flight.destanation])
                     if flight.is_depart == True:
                         table_content_dep[i].append(
-                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
+                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model, flight.destanation])
                     else:
                         table_content_arr[i].append(
-                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model])
+                            [flight.et_time.strftime('%H:%M'), flight.number, flight.company, flight.vessel_model, flight.destanation])
 
             data = {
                 'data_all': count_by_hours_all,
@@ -120,7 +120,7 @@ def companies():
     with session_db() as s:
         all_flights = s.query(Flights). \
             filter(Flights.et_date == day_to_seek, Flights.airport_iata == airport_to_seek). \
-            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model)
+            with_entities(Flights.et_time, Flights.number, Flights.is_depart, Flights.company, Flights.vessel_model, Flights.destanation)
 
         companies_list = [i[0] for i in all_flights.with_entities(Flights.company).distinct()]
         companies_list.sort()
@@ -169,7 +169,7 @@ def companies():
                         for flight in hour_company_flights:
                             company_table_content[hour].append(
                                 [flight.et_time.strftime('%H:%M'), flight.number, flight.is_depart,
-                                 flight.vessel_model])
+                                 flight.vessel_model, flight.destanation])
 
                 all_arr.append(count_by_hours_arr)
                 all_dep.append(count_by_hours_dep)
