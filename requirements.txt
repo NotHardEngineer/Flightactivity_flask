@@ -6,7 +6,7 @@ blinker==1.6.2
 bs4==0.0.1
 certifi==2023.7.22
 charset-normalizer==3.3.0
-chromedriver-binary==130.0.6723.91
+chromedriver-binary==142.0.7444.175
 click==8.1.7
 exceptiongroup==1.2.0
 Flask==2.3.3

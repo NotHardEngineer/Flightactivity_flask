@@ -1,5 +1,3 @@
-version: '3'
-# NOT BEING USED ANYMORE
 services:
   db:
     image: postgres:latest
