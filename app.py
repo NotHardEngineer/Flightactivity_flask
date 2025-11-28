@@ -43,6 +43,7 @@ dictConfig({
 
 class Config:
     TESTING = False
+    SERVER_NAME = "idklol"
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@localhost:5432/flightactivity_db"
     SQLALCHEMY_SESSION_OPTIONS = {"expire_on_commit": False}
 

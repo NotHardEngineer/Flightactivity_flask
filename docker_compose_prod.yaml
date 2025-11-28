@@ -6,7 +6,7 @@ services:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_DB=flightactivity_db
     volumes:
-      - postgres_data_prod:/var/lib/postgresql/data/
+      - postgres_data_prod:/var/lib/postgresql/
 
   app_prod:
     build:

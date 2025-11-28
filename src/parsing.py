@@ -26,13 +26,17 @@ bp_parsing = Blueprint("parsing", __name__, url_prefix='/parsing/')
 
 
 @bp_parsing.route("/")
+def update_and_redirect():
+    update_all()
+    return redirect(url_for('main.main'))
+
 def update_all():
     start_time = time.time()
     current_app.logger.info("Full update requested")
 
-    save_airportbaikal_tables()
-    parse_saved_airport_baikal_html()
-    parse_saved_airport_baikal_html(name="baikal_page_tomorrow")
+    # save_airportbaikal_tables()
+    # parse_saved_airport_baikal_html()
+    # parse_saved_airport_baikal_html(name="baikal_page_tomorrow")
 
     save_tolmachevo_tables()
     parse_saved_tolmachevo_html()
@@ -40,7 +44,6 @@ def update_all():
 
     current_app.logger.info("Update finished in %s sec" % format(time.time() - start_time, '.2f'))
 
-    return redirect(url_for('main.main'))
 
 
 def write_in_db(fn_umber: str, sh_time: str, sh_date: str, eta_time: str, eta_date: str,

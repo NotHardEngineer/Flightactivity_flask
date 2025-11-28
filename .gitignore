@@ -4,4 +4,4 @@
 /instance/
 /migrations/
 __pycache__
-*.log
+*.log*
