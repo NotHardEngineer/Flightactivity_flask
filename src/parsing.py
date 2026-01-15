@@ -128,6 +128,7 @@ def save_tolmachevo_tables(destination=os.path.join(BASE_DIR, "saved_pages"), na
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
+
         driver = webdriver.Chrome(options=chrome_options)
         driver.get(url_to_save)
         element = WebDriverWait(driver, timeout=100, poll_frequency=1) \
