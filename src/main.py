@@ -26,9 +26,10 @@ def main():
 
     airport_to_seek = 'obv'
     day_to_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+    current_app.logger.debug(request.method)
     if request.method == 'POST':
         forms = request.form
-        print(forms)
+        current_app.logger.debug(forms)
         if 'flights_date' in forms:
             day_to_seek = request.form['flights_date']
         if 'flights_port' in forms:
@@ -95,7 +96,10 @@ def main():
         else:
             current_app.logger.info("Main page without data returned in %s sec" % format(time.time() - start_time, '.2f'))
             flash("Данные за выбранную дату не найдены, пожалуйста, попробуйте позже или выберите другую дату")
-            return render_template("nodata.html")
+            return render_template("nodata.html",
+                                   title=f"Самолеты в {airport_to_seek}",
+                                   date=day_to_seek
+                                   )
 
 
 @bp_main.route("/companies/", methods=("GET", "POST"))

@@ -12,126 +12,70 @@
     <!-- lib for charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>  
 
-    <!-- Bootstrap 3 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    
-    <!-- Bootstrap 3 JS-->
-    <script src="https://code.jquery.com/jquery-2.2.4.js"
-        integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-    
-
+    <!-- Bootstrap 5 and icons CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     
+        
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand">Flightactivity</a>
+    <!-- Toggler (not in use yet) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Links buttons -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{url_for('main.main')}}">Главная</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('main.companies')}}">Компании</a>
+        </li>
+      </ul>
+      <!-- Searcher -->
+      <form class="d-flex" role="search" method="post">
+        <input class="me-2" type="date" value="{{date}}" aria-label="Search" id="flights_date" name="flights_date">
+        <button class="btn btn-primary" type="submit">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
 
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-
-        <div class="navbar-header">
-            <!-- BUTTON FOR COLLAPSIBLE -->
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#alignment-example" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <!-- BRAND -->
-            <div class="navbar-header">
-                <a class="navbar-brand">Flightactivity</a>
-                <!-- UPDATE BUTTON -->
-                <!-- <a class="action" href="{{ url_for('parsing.update_and_redirect') }}">
-                    <button type="button" class="btn btn-default navbar-btn">
-                        <span class="glyphicon glyphicon-refresh"></span>
-                    </button>
-                </a> -->
-            </div>
-        </div>
-        <!-- COLLAPSIBLE NAVBAR -->
-        <div class="collapse navbar-collapse" id="alignment-example">
-            <!-- Links -->
-            <ul class="nav navbar-nav">
-                <li><a href="{{url_for('main.main')}}">Главная</a></li>
-                <li><a href="{{url_for('main.companies')}}">Компании</a></li>
-
-            </ul>
-
-
-            
-
-            <form method="post" class="navbar-form navbar-right">
-
-                
-                <div class="form-group">
-                    <!-- <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                          <span id="flights_port_label">Выбор аэропорта</span>
-                          <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><input type="radio" id="flights_port_obv" name="flights_port" value="obv"><label for="flights_port_obv">
-                            Новосибирск (Толмачево)</label></li>
-                          <li><input type="radio" id="flights_port_uud" name="flights_port" value="uud"><label for="flights_port_uud">
-                            Улан-Удэ (Байкал)</label></li>
-                        </ul>
-                    </div> -->
-
-                    <input type="date" id="flights_date" name="flights_date">
-                </div>
-                <button type="submit" class="btn btn-default">
-                    <span class="glyphicon glyphicon-search"></span>
-                </button>
-            </form>
-
-            <style>
-                input[name='flights_port']{
-                display: none;
-                }
-                </style>
-                <script>
-                  $("input[name='flights_port']").change(function(e){
-                      $("#flights_port_label").text($(this).val());
-                  });
-                  
-                  
-                </script>
-            
-            
-
-        </div>
     </div>
+  </div>
 </nav>
-<script>
-    var date = '{{date}}';
-    document.getElementById("flights_date").defaultValue = date;
 
-    var port = '{{port}}';
-    document.getElementById("flights_port_label").defaultValue = port;
-</script>
 
+
+<!-- Message container -->
 <div class="container-fluid">
     {% for message in get_flashed_messages() %}
     <div class="row">
         <div class="flash">{{ message }}</div>
     </div>
-    {% endfor %}
-
-
-
-    
+    {% endfor %}    
 </div>
-<div class="container-fluid content">
 
+
+<div class="container-fluid content">
 {% block content %}{% endblock %}
 </div>
 
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" 
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
