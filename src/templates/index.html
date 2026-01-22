@@ -3,56 +3,52 @@
 <div class="container-fluid">
 
     <div class="row text-center justify-content-center">
-        <div class="col-md-6 col-xs-12">
+        <div class="col-md-8 col-lg-6 col-sm-12">
             <h1>Рейсы за {{date_for_show}}</h1>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12">
+        <div class="col-md-8 col-lg-6 col-sm-12">
             <h2>Все рейсы</h2>
             <canvas id="allFlightsGraph" width="400" height="200"></canvas>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12 table-responsive">
+        <div class="d-grid col-md-8 col-lg-6 col-sm-12 text-center">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#scheduleAllContent">
+                Посмотреть расписание
+            </button>
 
-            <div class="list-group-item" id="scheduleAll">
+            <div class="collapse" id="scheduleAllContent">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Номер рейса</th>
+                            <th>Компания</th>
+                            <th>Тип</th>
+                            <th>Судно</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for hour, hour_flights in table_content_all.items()%}
+                        <tr>
+                            <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td>
+                        </tr>
+                        {%for flight in hour_flights%}
+                        <tr >
+                            {%for col in flight%}
 
-                <div id="scheduleAllExpander" data-target="#scheduleAllContent" data-toggle="collapse"
-                    data-group-id="scheduleAllGrandparent" data-role="scheduleAllExpander">
-                    Посмотреть расписание
-                </div>
-
-                <div class="collapse" id="scheduleAllContent" aria-expanded="true">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Время</th>
-                                <th>Номер рейса</th>
-                                <th>Компания</th>
-                                <th>Тип</th>
-                                <th>Судно</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {%for hour, hour_flights in table_content_all.items()%}
-                            <tr>
-                                <td colspan="5">{{ hour }}:00 - {{hour + 1}}:00</td>
-                            </tr>
-                            {%for flight in hour_flights%}
-                            <tr >
-                                {%for col in flight%}
-
-                                <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
-                                {%endfor%}
-                            </tr>
+                            <td>{{col.replace('True', 'Вылет').replace('False', 'Прилет')}}</td>
                             {%endfor%}
-                            {%endfor%}
-                        </tbody>
-                    </table>
-                </div>
+                        </tr>
+                        {%endfor%}
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
 
             </div>
 
@@ -60,104 +56,89 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12">
+        <div class="col-md-8 col-lg-6 col-sm-12">
             <h2>Прилетающие рейсы</h2>
             <canvas id="activityChart2" width="400" height="200"></canvas>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12 table-responsive">
+        <div class="d-grid col-md-8 col-lg-6 col-sm-12 text-center">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#scheduleAriveContent">
+                Посмотреть расписание
+            </button>
 
-            <div class="list-group-item" id="scheduleArrive">
-
-                <div id="scheduleArriveExpander" data-target="#scheduleArriveContent" data-toggle="collapse"
-                    data-group-id="scheduleArriveGrandparent" data-role="scheduleArriveExpander">
-                    Посмотреть расписание
-                </div>
-
-                <div class="collapse" id="scheduleArriveContent" aria-expanded="true">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Время</th>
-                                <th>Номер рейса</th>
-                                <th>Компания</th>
-                                <th>Судно</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {%for hour, hour_flights in table_content_arr.items()%}
-                            <tr>
-                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
-                            </tr>
-                            {%for flight in hour_flights%}
-                            <tr>
-                                {%for col in flight%}
-                                <td>{{col}}</td>
-                                {%endfor%}
-                            </tr>
+            <div class="collapse" id="scheduleAriveContent">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Номер рейса</th>
+                            <th>Компания</th>
+                            <th>Судно</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for hour, hour_flights in table_content_arr.items()%}
+                        <tr>
+                            <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
+                        </tr>
+                        {%for flight in hour_flights%}
+                        <tr>
+                            {%for col in flight%}
+                            <td>{{col}}</td>
                             {%endfor%}
-                            {%endfor%}
-                        </tbody>
-                    </table>
-                </div>
-
+                        </tr>
+                        {%endfor%}
+                        {%endfor%}
+                    </tbody>
+                </table>
             </div>
-
         </div>
     </div>
 
+
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12">
+        <div class="col-md-8 col-lg-6 col-sm-12">
             <h2>Улетающие рейсы</h2>
             <canvas id="activityChart3" width="400" height="200"></canvas>
         </div>
     </div>
 
-
     <div class="row justify-content-center">
-        <div class="col-md-6 col-xs-12 table-responsive">
+        <div class="d-grid col-md-8 col-lg-6 col-sm-12 text-center">
+            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#scheduleDepartContent">
+                Посмотреть расписание
+            </button>
 
-            <div class="list-group-item" id="scheduleDepart">
-
-                <div id="scheduleDepartExpander" data-target="#scheduleDepartContent" data-toggle="collapse"
-                    data-group-id="scheduleDepartGrandparent" data-role="scheduleDepartExpander">
-                    Посмотреть расписание
-                </div>
-
-                <div class="collapse" id="scheduleDepartContent" aria-expanded="true">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Время</th>
-                                <th>Номер рейса</th>
-                                <th>Компания</th>
-                                <th>Судно</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {%for hour, hour_flights in table_content_dep.items()%}
-                            <tr>
-                                <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
-                            </tr>
-                            {%for flight in hour_flights%}
-                            <tr>
-                                {%for col in flight%}
-                                <td>{{col}}</td>
-                                {%endfor%}
-                            </tr>
+            <div class="collapse" id="scheduleDepartContent">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Номер рейса</th>
+                            <th>Компания</th>
+                            <th>Судно</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for hour, hour_flights in table_content_dep.items()%}
+                        <tr>
+                            <td colspan="4">{{ hour }}:00 - {{hour + 1}}:00</td>
+                        </tr>
+                        {%for flight in hour_flights%}
+                        <tr>
+                            {%for col in flight%}
+                            <td>{{col}}</td>
                             {%endfor%}
-                            {%endfor%}
-                        </tbody>
-                    </table>
-                </div>
-
+                        </tr>
+                        {%endfor%}
+                        {%endfor%}
+                    </tbody>
+                </table>
             </div>
-
         </div>
     </div>
-
 </div>
 
 <script>
