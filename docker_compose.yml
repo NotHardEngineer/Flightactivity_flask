@@ -9,6 +9,9 @@ services:
       - default
   web:
     build: .
+    environment:
+      - DB_USER=postgres
+      - DB_PASS=pass
     ports:
       - "5000:5000"
     depends_on:

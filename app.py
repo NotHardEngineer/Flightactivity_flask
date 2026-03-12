@@ -44,7 +44,9 @@ dictConfig({
 class Config:
     TESTING = False
     SERVER_NAME = "idklol"
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:pass@localhost:5432/flightactivity_db"
+    db_user = os.environ['DB_USER']
+    db_pass = os.environ['DB_PASS']
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{db_user}:{db_pass}@localhost:5432/flightactivity_db"
     SQLALCHEMY_SESSION_OPTIONS = {"expire_on_commit": False}
 
 
@@ -101,4 +103,4 @@ def create_app(config_class):
 
 if __name__ == "__main__":
     app = create_app(Config)
-    app.run(debug=True)
+    app.run(debug=False)
