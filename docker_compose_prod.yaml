@@ -8,7 +8,7 @@ services:
     volumes:
       - postgres_data_prod:/var/lib/postgresql/
 
-  app_prod:
+  flightactivity:
     build:
       context: .
       dockerfile: Dockerfile_prod
@@ -21,16 +21,16 @@ services:
       - db
 
   nginx:
-    build:
-      context: ./nginx
-    volumes:
-      - static_volume:/home/app/web/project/static
-      - media_volume:/home/app/web/project/media
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    env_file: cert.env
     ports:
-      - "1337:80"
-    depends_on:
-      - app_prod
-
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /path/to/conf:/etc/nginx/conf.d
+      # dont forget to mount certs dir when deploying
 volumes:
   postgres_data_prod:
   static_volume:
