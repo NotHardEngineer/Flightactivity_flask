@@ -103,4 +103,4 @@ def create_app(config_class):
 
 if __name__ == "__main__":
     app = create_app(Config)
-    app.run(debug=False)
+    app.run(debug=True)

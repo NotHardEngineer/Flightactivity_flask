@@ -21,19 +21,17 @@
 
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 col-sm-12">
-            <ul>
-                {%for hour, hour_flights in table_content_all.items()%}
-                    {%for flight in hour_flights%}
-                        <li>{{flight[2]}}</li>
-                    {%endfor%}
-                {%endfor%}
-            </ul>
+            <div class="collapse" id="filterAllList">
+                <!-- Populated by <script> -->
+            </div>
         </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 col-sm-12">
-            <canvas id="allFlightsGraph" width="400" height="200"></canvas>
+            <canvas id="allFlightsGraph" width="400" height="200">
+                <!-- Populated by <script> -->
+            </canvas>
         </div>
     </div>
 
@@ -164,12 +162,12 @@
 </div>
 
 <script>
-    // popover stuff
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-    return new bootstrap.Popover(popoverTriggerEl)
-    })
+    // Filters
+    let flights = JSON.parse('table_content_all.items');
+    let companies = [];
 
+
+    // Charts
     let data_all = JSON.parse('{{ data.data_all }}');
     let data_dep = JSON.parse('{{ data.data_dep }}');
     let data_arr = JSON.parse('{{ data.data_arr }}');
