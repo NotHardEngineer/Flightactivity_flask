@@ -22,6 +22,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 col-sm-12">
             <div class="collapse" id="filterAllList">
+                <p>Placeholder</p>
                 <!-- Populated by <script> -->
             </div>
         </div>
@@ -163,8 +164,6 @@
 
 <script>
     // Filters
-    let flights = JSON.parse('table_content_all.items');
-    let companies = [];
 
 
     // Charts
@@ -172,7 +171,7 @@
     let data_dep = JSON.parse('{{ data.data_dep }}');
     let data_arr = JSON.parse('{{ data.data_arr }}');
     // All Flights bar Chart
-    let maxYScale = Math.max(...data_all) + 1
+    let maxYScale = Math.max(...data_all) + 1;
     let AllFlightsGraphCanvas = document.getElementById('allFlightsGraph')
     let allFlightsGraphCtx = AllFlightsGraphCanvas.getContext('2d');
     let allFlightsGraph = new Chart(allFlightsGraphCtx, {

@@ -19,4 +19,4 @@ services:
     networks:
       - default
     volumes:
-      - .:/app-dev
+      - ./app:/app-dev

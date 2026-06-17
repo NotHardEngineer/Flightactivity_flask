@@ -1,7 +1,6 @@
 /venv/
-/.idea/
-/saved_pages/
-/instance/
-/migrations/
-__pycache__
+saved_pages/
+instance/
+migrations/
+__pycache__/
 *.log*
